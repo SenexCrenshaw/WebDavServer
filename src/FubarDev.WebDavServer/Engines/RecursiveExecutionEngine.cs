@@ -59,8 +59,11 @@ namespace FubarDev.WebDavServer.Engines
         public async Task<CollectionActionResult> ExecuteAsync(Uri sourceUrl, ICollection source, DepthHeader depth, TMissing target, CancellationToken cancellationToken)
         {
             if (_logger.IsEnabled(LogLevel.Trace))
+            {
                 _logger.LogTrace($"Collecting nodes for operation on collection {sourceUrl} with missing target {target.DestinationUrl}.");
-            var nodes = await source.GetNodeAsync(depth.OrderValue, cancellationToken).ConfigureAwait(false);
+            }
+
+            ICollectionNode nodes = await source.GetNodeAsync(depth.OrderValue, cancellationToken).ConfigureAwait(false);
             return await ExecuteAsync(sourceUrl, nodes, target, cancellationToken).ConfigureAwait(false);
         }
 
@@ -76,8 +79,11 @@ namespace FubarDev.WebDavServer.Engines
         public async Task<CollectionActionResult> ExecuteAsync(Uri sourceUrl, ICollection source, DepthHeader depth, TCollection target, CancellationToken cancellationToken)
         {
             if (_logger.IsEnabled(LogLevel.Trace))
+            {
                 _logger.LogTrace($"Collecting nodes for operation on collection {sourceUrl} with existing target {target.DestinationUrl}.");
-            var nodes = await source.GetNodeAsync(depth.OrderValue, cancellationToken).ConfigureAwait(false);
+            }
+
+            ICollectionNode nodes = await source.GetNodeAsync(depth.OrderValue, cancellationToken).ConfigureAwait(false);
             return await ExecuteAsync(sourceUrl, nodes, target, cancellationToken).ConfigureAwait(false);
         }
 
@@ -92,14 +98,17 @@ namespace FubarDev.WebDavServer.Engines
         public async Task<ActionResult> ExecuteAsync(Uri sourceUrl, IDocument source, TMissing target, CancellationToken cancellationToken)
         {
             if (_logger.IsEnabled(LogLevel.Trace))
+            {
                 _logger.LogTrace($"Perform operation on document {sourceUrl} with missing target {target.DestinationUrl}.");
+            }
+
             try
             {
-                var properties = await GetWriteableProperties(source, cancellationToken).ConfigureAwait(false);
+                List<IUntypedWriteableProperty> properties = await GetWriteableProperties(source, cancellationToken).ConfigureAwait(false);
 
-                var newDoc = await _handler.ExecuteAsync(source, target, cancellationToken).ConfigureAwait(false);
+                TDocument newDoc = await _handler.ExecuteAsync(source, target, cancellationToken).ConfigureAwait(false);
 
-                var failedPropertyNames = await newDoc.SetPropertiesAsync(properties, cancellationToken).ConfigureAwait(false);
+                IReadOnlyCollection<System.Xml.Linq.XName> failedPropertyNames = await newDoc.SetPropertiesAsync(properties, cancellationToken).ConfigureAwait(false);
                 if (failedPropertyNames.Count != 0)
                 {
                     _logger.LogDebug($"{target.DestinationUrl}: Failed setting properties {string.Join(", ", failedPropertyNames.Select(x => x.ToString()))}");
@@ -132,7 +141,9 @@ namespace FubarDev.WebDavServer.Engines
         public async Task<ActionResult> ExecuteAsync(Uri sourceUrl, IDocument source, TDocument target, CancellationToken cancellationToken)
         {
             if (_logger.IsEnabled(LogLevel.Trace))
+            {
                 _logger.LogTrace($"Try to perform operation on document {sourceUrl} with existing target {target.DestinationUrl}.");
+            }
 
             if (!_allowOverwrite)
             {
@@ -143,7 +154,9 @@ namespace FubarDev.WebDavServer.Engines
             if (_handler.ExistingTargetBehaviour == RecursiveTargetBehaviour.DeleteTarget)
             {
                 if (_logger.IsEnabled(LogLevel.Trace))
+                {
                     _logger.LogTrace($"Delete {target.DestinationUrl} before performing operation on document {sourceUrl}.");
+                }
 
                 TMissing missingTarget;
                 try
@@ -163,15 +176,19 @@ namespace FubarDev.WebDavServer.Engines
             }
 
             if (_logger.IsEnabled(LogLevel.Trace))
+            {
                 _logger.LogTrace($"Perform operation on document {sourceUrl} with existing target {target.DestinationUrl}.");
+            }
 
-            var properties = await GetWriteableProperties(source, cancellationToken).ConfigureAwait(false);
+            List<IUntypedWriteableProperty> properties = await GetWriteableProperties(source, cancellationToken).ConfigureAwait(false);
 
-            var docActionResult = await _handler.ExecuteAsync(source, target, cancellationToken).ConfigureAwait(false);
+            ActionResult docActionResult = await _handler.ExecuteAsync(source, target, cancellationToken).ConfigureAwait(false);
             if (docActionResult.IsFailure)
+            {
                 return docActionResult;
+            }
 
-            var failedPropertyNames = await target.SetPropertiesAsync(properties, cancellationToken).ConfigureAwait(false);
+            IReadOnlyCollection<System.Xml.Linq.XName> failedPropertyNames = await target.SetPropertiesAsync(properties, cancellationToken).ConfigureAwait(false);
             if (failedPropertyNames.Count != 0)
             {
                 _logger.LogDebug($"{target.DestinationUrl}: Failed setting properties {string.Join(", ", failedPropertyNames.Select(x => x.ToString()))}");
@@ -186,14 +203,15 @@ namespace FubarDev.WebDavServer.Engines
 
         private async Task<List<IUntypedWriteableProperty>> GetWriteableProperties(IEntry entry, CancellationToken cancellationToken)
         {
-            var properties = new List<IUntypedWriteableProperty>();
-            using (var propsEnum = entry.GetProperties(_handler.Dispatcher).GetEnumerator())
+            List<IUntypedWriteableProperty> properties = new();
+            await using (IAsyncEnumerator<IUntypedReadableProperty> propsEnum = entry.GetProperties(_handler.Dispatcher).GetAsyncEnumerator(cancellationToken))
             {
-                while (await propsEnum.MoveNext(cancellationToken).ConfigureAwait(false))
+                while (await propsEnum.MoveNextAsync(cancellationToken).ConfigureAwait(false))
                 {
-                    var prop = propsEnum.Current as IUntypedWriteableProperty;
-                    if (prop != null)
+                    if (propsEnum.Current is IUntypedWriteableProperty prop)
+                    {
                         properties.Add(prop);
+                    }
                 }
             }
 
@@ -207,9 +225,11 @@ namespace FubarDev.WebDavServer.Engines
             CancellationToken cancellationToken)
         {
             if (_logger.IsEnabled(LogLevel.Trace))
+            {
                 _logger.LogTrace($"Collect properties for operation on collection {sourceUrl} and create target {target.DestinationUrl}.");
+            }
 
-            var properties = await GetWriteableProperties(sourceNode.Collection, cancellationToken).ConfigureAwait(false);
+            List<IUntypedWriteableProperty> properties = await GetWriteableProperties(sourceNode.Collection, cancellationToken).ConfigureAwait(false);
 
             TCollection newColl;
             try
@@ -237,7 +257,9 @@ namespace FubarDev.WebDavServer.Engines
             if (_allowOverwrite && _handler.ExistingTargetBehaviour == RecursiveTargetBehaviour.DeleteTarget)
             {
                 if (_logger.IsEnabled(LogLevel.Trace))
+                {
                     _logger.LogTrace($"Delete existing target {target.DestinationUrl} for operation on collection {sourceUrl}.");
+                }
 
                 // Only delete an existing collection when the client allows an overwrite
                 TMissing missing;
@@ -258,9 +280,11 @@ namespace FubarDev.WebDavServer.Engines
             }
 
             if (_logger.IsEnabled(LogLevel.Trace))
+            {
                 _logger.LogTrace($"Collect properties for operation on collection {sourceUrl} with existing target {target.DestinationUrl}.");
+            }
 
-            var properties = await GetWriteableProperties(sourceNode.Collection, cancellationToken).ConfigureAwait(false);
+            List<IUntypedWriteableProperty> properties = await GetWriteableProperties(sourceNode.Collection, cancellationToken).ConfigureAwait(false);
             return await ExecuteAsync(sourceUrl, sourceNode, target, properties, cancellationToken).ConfigureAwait(false);
         }
 
@@ -272,99 +296,97 @@ namespace FubarDev.WebDavServer.Engines
             CancellationToken cancellationToken)
         {
             if (_logger.IsEnabled(LogLevel.Trace))
-                _logger.LogTrace($"Perform operation on collection {sourceUrl} with existing target {target.DestinationUrl}.");
-
-            var documentActionResults = ImmutableList<ActionResult>.Empty;
-            var collectionActionResults = ImmutableList<CollectionActionResult>.Empty;
-
-            var subNodeProperties = new Dictionary<string, IReadOnlyCollection<IUntypedWriteableProperty>>();
-            foreach (var childNode in sourceNode.Nodes)
             {
-                var subProperties = await GetWriteableProperties(childNode.Collection, cancellationToken).ConfigureAwait(false);
+                _logger.LogTrace($"Perform operation on collection {sourceUrl} with existing target {target.DestinationUrl}.");
+            }
+
+            ImmutableList<ActionResult> documentActionResults = ImmutableList<ActionResult>.Empty;
+            ImmutableList<CollectionActionResult> collectionActionResults = ImmutableList<CollectionActionResult>.Empty;
+
+            Dictionary<string, IReadOnlyCollection<IUntypedWriteableProperty>> subNodeProperties = new();
+            foreach (ICollectionNode childNode in sourceNode.Nodes)
+            {
+                List<IUntypedWriteableProperty> subProperties = await GetWriteableProperties(childNode.Collection, cancellationToken).ConfigureAwait(false);
                 subNodeProperties.Add(childNode.Name, subProperties);
             }
 
-            foreach (var document in sourceNode.Documents)
+            foreach (IDocument document in sourceNode.Documents)
             {
-                var docUrl = sourceUrl.Append(document);
+                Uri docUrl = sourceUrl.Append(document);
                 if (target.Created)
                 {
                     // Collection was created by us - we just assume that the document doesn't exist
-                    var missingTarget = target.NewMissing(document.Name);
-                    var docResult = await ExecuteAsync(docUrl, document, missingTarget, cancellationToken).ConfigureAwait(false);
+                    TMissing missingTarget = target.NewMissing(document.Name);
+                    ActionResult docResult = await ExecuteAsync(docUrl, document, missingTarget, cancellationToken).ConfigureAwait(false);
                     documentActionResults = documentActionResults.Add(docResult);
                 }
                 else
                 {
-                    var foundTarget = await target.GetAsync(document.Name, cancellationToken).ConfigureAwait(false);
-                    var docTarget = foundTarget as TDocument;
-                    if (docTarget != null)
+                    ITarget foundTarget = await target.GetAsync(document.Name, cancellationToken).ConfigureAwait(false);
+                    if (foundTarget is TDocument docTarget)
                     {
                         // We found a document: Business as usual when we're allowed to overwrite it
-                        var docResult = await ExecuteAsync(docUrl, document, docTarget, cancellationToken).ConfigureAwait(false);
+                        ActionResult docResult = await ExecuteAsync(docUrl, document, docTarget, cancellationToken).ConfigureAwait(false);
                         documentActionResults = documentActionResults.Add(docResult);
                     }
                     else
                     {
-                        var collTarget = foundTarget as TCollection;
-                        if (collTarget != null)
+                        if (foundTarget is TCollection collTarget)
                         {
                             // We found a collection instead of a document
                             _logger.LogDebug($"{target.DestinationUrl}: Found a collection instead of a document");
-                            var docResult = new ActionResult(ActionStatus.OverwriteFailed, foundTarget);
+                            ActionResult docResult = new(ActionStatus.OverwriteFailed, foundTarget);
                             documentActionResults = documentActionResults.Add(docResult);
                         }
                         else
                         {
                             // We didn't find anything: Business as usual
-                            var missingTarget = (TMissing)foundTarget;
-                            var docResult = await ExecuteAsync(docUrl, document, missingTarget, cancellationToken).ConfigureAwait(false);
+                            TMissing missingTarget = (TMissing)foundTarget;
+                            ActionResult docResult = await ExecuteAsync(docUrl, document, missingTarget, cancellationToken).ConfigureAwait(false);
                             documentActionResults = documentActionResults.Add(docResult);
                         }
                     }
                 }
             }
 
-            foreach (var childNode in sourceNode.Nodes)
+            foreach (ICollectionNode childNode in sourceNode.Nodes)
             {
-                var childProperties = subNodeProperties[childNode.Name];
-                var collection = childNode.Collection;
-                var docUrl = sourceUrl.Append(childNode.Collection);
+                IReadOnlyCollection<IUntypedWriteableProperty> childProperties = subNodeProperties[childNode.Name];
+                ICollection collection = childNode.Collection;
+                Uri docUrl = sourceUrl.Append(childNode.Collection);
                 if (target.Created)
                 {
                     // Collection was created by us - we just assume that the sub collection doesn't exist
-                    var missingTarget = target.NewMissing(childNode.Name);
-                    var newColl = await missingTarget.CreateCollectionAsync(cancellationToken).ConfigureAwait(false);
-                    var collResult = await ExecuteAsync(docUrl, childNode, newColl, childProperties, cancellationToken).ConfigureAwait(false);
+                    TMissing missingTarget = target.NewMissing(childNode.Name);
+                    TCollection newColl = await missingTarget.CreateCollectionAsync(cancellationToken).ConfigureAwait(false);
+                    CollectionActionResult collResult = await ExecuteAsync(docUrl, childNode, newColl, childProperties, cancellationToken).ConfigureAwait(false);
                     collectionActionResults = collectionActionResults.Add(collResult);
                 }
                 else
                 {
                     // Test if the target node exists
-                    var foundTarget = await target.GetAsync(collection.Name, cancellationToken).ConfigureAwait(false);
-                    var docTarget = foundTarget as TDocument;
-                    if (docTarget != null)
+                    ITarget foundTarget = await target.GetAsync(collection.Name, cancellationToken).ConfigureAwait(false);
+                    if (foundTarget is TDocument docTarget)
                     {
                         // We found a document instead of a collection
                         _logger.LogDebug($"{target.DestinationUrl}: Found a document instead of a collection");
-                        var collResult = new CollectionActionResult(ActionStatus.OverwriteFailed, foundTarget);
+                        CollectionActionResult collResult = new(ActionStatus.OverwriteFailed, foundTarget);
                         collectionActionResults = collectionActionResults.Add(collResult);
                     }
                     else
                     {
-                        var collTarget = foundTarget as TCollection;
-                        if (collTarget != null)
+                        if (foundTarget is TCollection collTarget)
                         {
                             // We found a collection: Business as usual
-                            var collResult = await ExecuteAsync(docUrl, childNode, collTarget, childProperties, cancellationToken).ConfigureAwait(false);
+                            CollectionActionResult collResult = await ExecuteAsync(docUrl, childNode, collTarget, childProperties, cancellationToken).ConfigureAwait(false);
                             collectionActionResults = collectionActionResults.Add(collResult);
                         }
                         else
                         {
                             // We didn't find anything: Business as usual
-                            var missingTarget = (TMissing)foundTarget;
-                            var newColl = await missingTarget.CreateCollectionAsync(cancellationToken).ConfigureAwait(false);
-                            var collResult = await ExecuteAsync(docUrl, childNode, newColl, childProperties, cancellationToken).ConfigureAwait(false);
+                            TMissing missingTarget = (TMissing)foundTarget;
+                            TCollection newColl = await missingTarget.CreateCollectionAsync(cancellationToken).ConfigureAwait(false);
+                            CollectionActionResult collResult = await ExecuteAsync(docUrl, childNode, newColl, childProperties, cancellationToken).ConfigureAwait(false);
                             collectionActionResults = collectionActionResults.Add(collResult);
                         }
                     }
@@ -374,9 +396,11 @@ namespace FubarDev.WebDavServer.Engines
             try
             {
                 if (_logger.IsEnabled(LogLevel.Trace))
+                {
                     _logger.LogTrace($"Set properties on collection {target.DestinationUrl}.");
+                }
 
-                var failedPropertyNames = await target.SetPropertiesAsync(properties, cancellationToken).ConfigureAwait(false);
+                IReadOnlyCollection<System.Xml.Linq.XName> failedPropertyNames = await target.SetPropertiesAsync(properties, cancellationToken).ConfigureAwait(false);
                 if (failedPropertyNames.Count != 0)
                 {
                     _logger.LogDebug($"{target.DestinationUrl}: Failed setting properties {string.Join(", ", failedPropertyNames.Select(x => x.ToString()))}");

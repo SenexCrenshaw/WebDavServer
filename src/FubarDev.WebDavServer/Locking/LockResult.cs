@@ -2,7 +2,7 @@
 // Copyright (c) Fubar Development Junker. All rights reserved.
 // </copyright>
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Locking
 {
@@ -32,13 +32,13 @@ namespace FubarDev.WebDavServer.Locking
         /// <summary>
         /// Gets the active lock when locking succeeded
         /// </summary>
-        [CanBeNull]
+        
         public IActiveLock Lock { get; }
 
         /// <summary>
         /// Gets the collection of locks preventing locking the given destination.
         /// </summary>
-        [CanBeNull]
+        
         public LockStatus ConflictingLocks { get; }
     }
 }

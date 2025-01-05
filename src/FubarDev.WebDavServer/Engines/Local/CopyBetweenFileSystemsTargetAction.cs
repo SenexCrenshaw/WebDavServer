@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.FileSystem;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Engines.Local
 {
@@ -21,7 +21,7 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// Initializes a new instance of the <see cref="CopyBetweenFileSystemsTargetAction"/> class.
         /// </summary>
         /// <param name="dispatcher">The WebDAV dispatcher</param>
-        public CopyBetweenFileSystemsTargetAction([NotNull] IWebDavDispatcher dispatcher)
+        public CopyBetweenFileSystemsTargetAction( IWebDavDispatcher dispatcher)
         {
             Dispatcher = dispatcher;
         }

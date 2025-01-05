@@ -12,7 +12,6 @@ using DecaTec.WebDav;
 
 using FubarDev.WebDavServer.AspNetCore;
 using FubarDev.WebDavServer.AspNetCore.Logging;
-using FubarDev.WebDavServer.Engines.Remote;
 using FubarDev.WebDavServer.FileSystem;
 using FubarDev.WebDavServer.FileSystem.InMemory;
 using FubarDev.WebDavServer.Handlers.Impl;
@@ -22,7 +21,7 @@ using FubarDev.WebDavServer.Props.Store;
 using FubarDev.WebDavServer.Props.Store.InMemory;
 using FubarDev.WebDavServer.Tests.Support;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +29,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
+using IHttpMessageHandlerFactory = FubarDev.WebDavServer.Engines.Remote.IHttpMessageHandlerFactory;
 
 namespace FubarDev.WebDavServer.Tests
 {
@@ -44,7 +45,7 @@ namespace FubarDev.WebDavServer.Tests
 
         protected ServerTestsBase(RecursiveProcessingMode processingMode)
         {
-            var builder = new WebHostBuilder()
+            IWebHostBuilder builder = new WebHostBuilder()
                 .ConfigureServices(sc => ConfigureServices(this, processingMode, sc))
                 .UseStartup<TestStartup>();
 
@@ -59,16 +60,16 @@ namespace FubarDev.WebDavServer.Tests
             FileSystem = _scope.ServiceProvider.GetRequiredService<IFileSystem>();
         }
 
-        [NotNull]
+
         protected IFileSystem FileSystem { get; }
 
-        [NotNull]
+
         protected TestServer Server { get; }
 
-        [NotNull]
+
         protected WebDavClient Client { get; }
 
-        [NotNull]
+
         protected IServiceProvider ServiceProvider => _scope.ServiceProvider;
 
         public void Dispose()
@@ -97,33 +98,33 @@ namespace FubarDev.WebDavServer.Tests
                     })
                 .AddScoped<IWebDavContext>(sp => new TestHost(sp, container.Server.BaseAddress, sp.GetRequiredService<IHttpContextAccessor>()))
                 .AddScoped<IHttpMessageHandlerFactory>(sp => new TestHttpMessageHandlerFactory(container.Server))
-                .AddScoped(sp => fileSystemFactory ?? (fileSystemFactory = ActivatorUtilities.CreateInstance<InMemoryFileSystemFactory>(sp)))
-                .AddScoped(sp => propertyStoreFactory ?? (propertyStoreFactory = ActivatorUtilities.CreateInstance<InMemoryPropertyStoreFactory>(sp)))
+                .AddScoped(sp => (fileSystemFactory ??= ActivatorUtilities.CreateInstance<InMemoryFileSystemFactory>(sp)))
+                .AddScoped(sp => (propertyStoreFactory ??= ActivatorUtilities.CreateInstance<InMemoryPropertyStoreFactory>(sp)))
                 .AddSingleton<ILockManager, InMemoryLockManager>()
                 .AddMvcCore()
                 .AddApplicationPart(typeof(TestWebDavController).GetTypeInfo().Assembly)
                 .AddWebDav();
         }
 
-        [UsedImplicitly]
+
         private class TestStartup
         {
-            [UsedImplicitly]
+
             public IServiceProvider ConfigureServices(IServiceCollection services)
             {
                 return services.BuildServiceProvider(true);
             }
 
-            [UsedImplicitly]
-            public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-            {
-                loggerFactory.AddDebug((path, level) =>
-                {
-                    if (path == "FubarDev.WebDavServer.AspNetCore.WebDavIndirectResult")
-                        return level >= LogLevel.Information;
-                    return level >= LogLevel.Debug;
-                });
 
+            public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggingBuilder loggerFactory)
+            {
+                //loggerFactory.AddDebug((path, level) =>
+                //{
+                //    if (path == "FubarDev.WebDavServer.AspNetCore.WebDavIndirectResult")
+                //        return level >= LogLevel.Information;
+                //    return level >= LogLevel.Debug;
+                //});
+                loggerFactory.AddDebug();
                 app.UseMiddleware<RequestLogMiddleware>();
                 app.UseMvc();
             }

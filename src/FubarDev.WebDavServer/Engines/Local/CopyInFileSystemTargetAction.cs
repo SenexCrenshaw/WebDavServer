@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.FileSystem;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Engines.Local
 {
@@ -22,7 +22,7 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// Initializes a new instance of the <see cref="CopyInFileSystemTargetAction"/> class.
         /// </summary>
         /// <param name="dispatcher">The WebDAV dispatcher</param>
-        public CopyInFileSystemTargetAction([NotNull] IWebDavDispatcher dispatcher)
+        public CopyInFileSystemTargetAction( IWebDavDispatcher dispatcher)
         {
             Dispatcher = dispatcher;
         }

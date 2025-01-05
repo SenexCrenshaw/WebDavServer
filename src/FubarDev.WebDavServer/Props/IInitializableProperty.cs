@@ -4,7 +4,7 @@
 
 using System.Xml.Linq;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props
 {
@@ -20,6 +20,6 @@ namespace FubarDev.WebDavServer.Props
         /// Initialize the property with an <see cref="XElement"/>
         /// </summary>
         /// <param name="initialValue">The element to intialize the property with</param>
-        void Init([NotNull] XElement initialValue);
+        void Init( XElement initialValue);
     }
 }

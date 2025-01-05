@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -45,7 +45,7 @@ namespace FubarDev.WebDavServer.Locking.InMemory
 
         private class InMemoryTransaction : ILockManagerTransaction
         {
-            [NotNull]
+            
             private readonly InMemoryLockManager _lockManager;
 
             private IImmutableDictionary<string, IActiveLock> _locks;
@@ -54,7 +54,7 @@ namespace FubarDev.WebDavServer.Locking.InMemory
             /// Initializes a new instance of the <see cref="InMemoryTransaction"/> class.
             /// </summary>
             /// <param name="lockManager">The lock manager that stores the locks</param>
-            public InMemoryTransaction([NotNull] InMemoryLockManager lockManager)
+            public InMemoryTransaction( InMemoryLockManager lockManager)
             {
                 _lockManager = lockManager;
                 _locks = lockManager._locks;

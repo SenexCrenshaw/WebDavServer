@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Locking
 {
@@ -35,7 +35,7 @@ namespace FubarDev.WebDavServer.Locking
         /// Initializes a new instance of the <see cref="ImplicitLock"/> class.
         /// </summary>
         /// <param name="ownedLocks">The locks matched by the <c>If</c> header</param>
-        public ImplicitLock([NotNull] [ItemNotNull] IReadOnlyCollection<IActiveLock> ownedLocks)
+        public ImplicitLock(  IReadOnlyCollection<IActiveLock> ownedLocks)
         {
             OwnedLocks = ownedLocks;
             IsSuccessful = true;
@@ -47,7 +47,7 @@ namespace FubarDev.WebDavServer.Locking
         /// </summary>
         /// <param name="lockManager">The lock manager</param>
         /// <param name="lockResult">Either the implicit lock or the conflicting locks</param>
-        public ImplicitLock([NotNull] ILockManager lockManager, [NotNull] LockResult lockResult)
+        public ImplicitLock( ILockManager lockManager,  LockResult lockResult)
         {
             _lockManager = lockManager;
             if (lockResult.Lock != null)

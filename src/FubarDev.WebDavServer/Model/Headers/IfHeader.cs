@@ -8,7 +8,7 @@ using System.Linq;
 
 using FubarDev.WebDavServer.Utils;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Model.Headers
 {
@@ -17,7 +17,7 @@ namespace FubarDev.WebDavServer.Model.Headers
     /// </summary>
     public class IfHeader
     {
-        private IfHeader([NotNull] [ItemNotNull] IReadOnlyCollection<IfHeaderList> lists)
+        private IfHeader(  IReadOnlyCollection<IfHeaderList> lists)
         {
             Lists = lists;
         }
@@ -25,8 +25,8 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// <summary>
         /// Gets all condition lists
         /// </summary>
-        [NotNull]
-        [ItemNotNull]
+        
+        
         public IReadOnlyCollection<IfHeaderList> Lists { get; }
 
         /// <summary>
@@ -36,8 +36,8 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// <param name="etagComparer">The comparer to use for entity tag comparison</param>
         /// <param name="context">The WebDAV request context</param>
         /// <returns>The new <see cref="IfHeader"/></returns>
-        [NotNull]
-        public static IfHeader Parse([NotNull] string s, [NotNull] EntityTagComparer etagComparer, [NotNull] IWebDavContext context)
+        
+        public static IfHeader Parse( string s,  EntityTagComparer etagComparer,  IWebDavContext context)
         {
             var source = new StringSource(s);
             var lists = IfHeaderList.Parse(source, etagComparer, context).ToList();

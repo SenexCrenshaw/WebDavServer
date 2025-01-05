@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.FileSystem;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Engines.Local
 {
@@ -26,11 +26,11 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// <param name="created">Was this collection created by the <see cref="RecursiveExecutionEngine{TCollection,TDocument,TMissing}"/></param>
         /// <param name="targetActions">The target actions implementation to use</param>
         public CollectionTarget(
-            [NotNull] Uri destinationUrl,
-            [CanBeNull] CollectionTarget parent,
-            [NotNull] ICollection collection,
+             Uri destinationUrl,
+             CollectionTarget parent,
+             ICollection collection,
             bool created,
-            [NotNull] ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
+             ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
             : base(targetActions, parent, destinationUrl, collection)
         {
             Collection = collection;
@@ -40,7 +40,7 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// <summary>
         /// Gets the underlying collection
         /// </summary>
-        [NotNull]
+        
         public ICollection Collection { get; }
 
         /// <inheritdoc />
@@ -53,11 +53,11 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// <param name="collection">The underlying collection</param>
         /// <param name="targetActions">The target actions implementation to use</param>
         /// <returns>The created collection target object</returns>
-        [NotNull]
+        
         public static CollectionTarget NewInstance(
-            [NotNull] Uri destinationUrl,
-            [NotNull] ICollection collection,
-            [NotNull] ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
+             Uri destinationUrl,
+             ICollection collection,
+             ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
         {
             CollectionTarget parentTarget;
             if (collection.Parent != null)

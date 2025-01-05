@@ -4,7 +4,7 @@
 
 using System.Xml.Linq;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Model
 {
@@ -18,7 +18,7 @@ namespace FubarDev.WebDavServer.Model
         /// <summary>
         /// Gets the WebDAV namespace
         /// </summary>
-        [NotNull]
+        
         public static XNamespace Dav { get; } = XNamespace.Get(WebDavNamespaceName);
     }
 }

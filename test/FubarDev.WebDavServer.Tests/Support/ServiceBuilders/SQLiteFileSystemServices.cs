@@ -23,11 +23,11 @@ namespace FubarDev.WebDavServer.Tests.Support.ServiceBuilders
 {
     public class SQLiteFileSystemServices : IFileSystemServices, IDisposable
     {
-        private readonly ConcurrentBag<string> _tempDbRootPaths = new ConcurrentBag<string>();
+        private readonly ConcurrentBag<string> _tempDbRootPaths = [];
 
         public SQLiteFileSystemServices()
         {
-            var serviceCollection = new ServiceCollection()
+            IServiceCollection serviceCollection = new ServiceCollection()
                 .AddOptions()
                 .AddLogging()
                 .Configure<InMemoryLockManagerOptions>(opt =>
@@ -40,22 +40,22 @@ namespace FubarDev.WebDavServer.Tests.Support.ServiceBuilders
                 .AddScoped<IFileSystemFactory, SQLiteFileSystemFactory>(
                     sp =>
                     {
-                        var tempRootPath = Path.Combine(
+                        string tempRootPath = Path.Combine(
                             Path.GetTempPath(),
                             "webdavserver-sqlite-tests",
                             Guid.NewGuid().ToString("N"));
                         Directory.CreateDirectory(tempRootPath);
                         _tempDbRootPaths.Add(tempRootPath);
 
-                        var opt = new SQLiteFileSystemOptions
+                        SQLiteFileSystemOptions opt = new()
                         {
                             RootPath = tempRootPath,
                         };
-                        var pte = sp.GetRequiredService<IPathTraversalEngine>();
-                        var psf = sp.GetService<IPropertyStoreFactory>();
-                        var lm = sp.GetService<ILockManager>();
+                        IPathTraversalEngine pte = sp.GetRequiredService<IPathTraversalEngine>();
+                        IPropertyStoreFactory psf = sp.GetService<IPropertyStoreFactory>();
+                        ILockManager lm = sp.GetService<ILockManager>();
 
-                        var fsf = new SQLiteFileSystemFactory(
+                        SQLiteFileSystemFactory fsf = new(
                             new OptionsWrapper<SQLiteFileSystemOptions>(opt),
                             pte,
                             psf,
@@ -66,15 +66,15 @@ namespace FubarDev.WebDavServer.Tests.Support.ServiceBuilders
                 .AddWebDav();
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
-            var loggerFactory = ServiceProvider.GetRequiredService<ILoggerFactory>();
-            loggerFactory.AddDebug(LogLevel.Trace);
+            ILoggingBuilder loggerFactory = ServiceProvider.GetRequiredService<ILoggingBuilder>();
+            loggerFactory.AddDebug();
         }
 
         public IServiceProvider ServiceProvider { get; }
 
         public void Dispose()
         {
-            foreach (var tempDbRootPath in _tempDbRootPaths.Where(Directory.Exists))
+            foreach (string tempDbRootPath in _tempDbRootPaths.Where(Directory.Exists))
             {
                 Directory.Delete(tempDbRootPath, true);
             }

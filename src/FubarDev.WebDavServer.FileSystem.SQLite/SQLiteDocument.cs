@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 using SQLitePCL;
 
@@ -39,25 +39,28 @@ namespace FubarDev.WebDavServer.FileSystem.SQLite
         /// <inheritdoc />
         public Task<Stream> OpenReadAsync(CancellationToken cancellationToken)
         {
-            var result = Connection.CreateCommand("select rowid from filesystementrydata where id=?", Info.Id)
+            RowIdTemp result = Connection.CreateCommand("select rowid from filesystementrydata where id=?", Info.Id)
                 .ExecuteQuery<RowIdTemp>()
                 .FirstOrDefault();
             if (result == null)
+            {
                 return Task.FromResult<Stream>(new MemoryStream());
+            }
 
-            sqlite3_blob blob;
-            var rc = raw.sqlite3_blob_open(
+            int rc = raw.sqlite3_blob_open(
                 Connection.Handle,
                 "main",
                 "filesystementrydata",
                 "data",
                 Convert.ToInt64(result.RowId),
                 0,
-                out blob);
+                out sqlite3_blob blob);
             if (rc != 0)
+            {
                 throw new SQLiteFileSystemException(Connection.Handle);
+            }
 
-            var stream = new SQLiteBlobReadStream(Connection.Handle, blob);
+            SQLiteBlobReadStream stream = new(Connection.Handle, blob);
             return Task.FromResult<Stream>(stream);
         }
 
@@ -76,7 +79,7 @@ namespace FubarDev.WebDavServer.FileSystem.SQLite
                 Connection.Delete(Info);
             });
 
-            var propStore = FileSystem.PropertyStore;
+            Props.Store.IPropertyStore propStore = FileSystem.PropertyStore;
             if (propStore != null)
             {
                 await propStore.RemoveAsync(this, cancellationToken).ConfigureAwait(false);
@@ -88,9 +91,9 @@ namespace FubarDev.WebDavServer.FileSystem.SQLite
         /// <inheritdoc />
         public async Task<IDocument> CopyToAsync(ICollection collection, string name, CancellationToken cancellationToken)
         {
-            var targetId = collection.Path.Append(name, false).OriginalString.ToLowerInvariant();
-            var dir = (SQLiteCollection)collection;
-            var targetEntry = new FileEntry()
+            string targetId = collection.Path.Append(name, false).OriginalString.ToLowerInvariant();
+            SQLiteCollection dir = (SQLiteCollection)collection;
+            FileEntry targetEntry = new()
             {
                 Id = targetId,
                 Name = name,
@@ -112,13 +115,13 @@ namespace FubarDev.WebDavServer.FileSystem.SQLite
                     .ExecuteNonQuery();
             });
 
-            var doc = new SQLiteDocument(dir.SQLiteFileSystem, dir, targetEntry, dir.Path.Append(name, false));
+            SQLiteDocument doc = new(dir.SQLiteFileSystem, dir, targetEntry, dir.Path.Append(name, false));
 
-            var sourcePropStore = FileSystem.PropertyStore;
-            var destPropStore = collection.FileSystem.PropertyStore;
+            Props.Store.IPropertyStore sourcePropStore = FileSystem.PropertyStore;
+            Props.Store.IPropertyStore destPropStore = collection.FileSystem.PropertyStore;
             if (sourcePropStore != null && destPropStore != null)
             {
-                var sourceProps = await sourcePropStore.GetAsync(this, cancellationToken).ConfigureAwait(false);
+                System.Collections.Generic.IReadOnlyCollection<System.Xml.Linq.XElement> sourceProps = await sourcePropStore.GetAsync(this, cancellationToken).ConfigureAwait(false);
                 await destPropStore.RemoveAsync(doc, cancellationToken).ConfigureAwait(false);
                 await destPropStore.SetAsync(doc, sourceProps, cancellationToken).ConfigureAwait(false);
             }
@@ -133,7 +136,7 @@ namespace FubarDev.WebDavServer.FileSystem.SQLite
         /// <inheritdoc />
         public async Task<IDocument> MoveToAsync(ICollection collection, string name, CancellationToken cancellationToken)
         {
-            var newDoc = await CopyToAsync(collection, name, cancellationToken).ConfigureAwait(false);
+            IDocument newDoc = await CopyToAsync(collection, name, cancellationToken).ConfigureAwait(false);
             await DeleteAsync(cancellationToken).ConfigureAwait(false);
             return newDoc;
         }
@@ -144,7 +147,7 @@ namespace FubarDev.WebDavServer.FileSystem.SQLite
             public long RowId
             {
                 get;
-                [UsedImplicitly]
+
                 set;
             }
         }

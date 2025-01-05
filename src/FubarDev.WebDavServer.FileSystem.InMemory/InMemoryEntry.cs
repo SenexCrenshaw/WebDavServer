@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.Model.Headers;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.FileSystem.InMemory
 {
@@ -59,13 +59,13 @@ namespace FubarDev.WebDavServer.FileSystem.InMemory
         /// <summary>
         /// Gets the file system
         /// </summary>
-        [NotNull]
+        
         protected InMemoryFileSystem InMemoryFileSystem { get; }
 
         /// <summary>
         /// Gets the parent collection
         /// </summary>
-        [CanBeNull]
+        
         protected InMemoryDirectory InMemoryParent => _parent as InMemoryDirectory;
 
         /// <inheritdoc />

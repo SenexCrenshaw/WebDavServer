@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Locking
 {
@@ -37,7 +37,7 @@ namespace FubarDev.WebDavServer.Locking
         private const string SharedId = "shared";
         private const string ExclusiveId = "exclusive";
 
-        private LockShareMode([NotNull] string id, [NotNull] lockscope xmlValue)
+        private LockShareMode( string id,  lockscope xmlValue)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
@@ -48,13 +48,13 @@ namespace FubarDev.WebDavServer.Locking
         /// <summary>
         /// Gets the XML name of the lock share mode
         /// </summary>
-        [NotNull]
+        
         public XName Name { get; }
 
         /// <summary>
         /// Gets the <see cref="lockscope"/> element for this lock share mode
         /// </summary>
-        [NotNull]
+        
         public lockscope XmlValue { get; }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace FubarDev.WebDavServer.Locking
         /// </summary>
         /// <param name="shareMode">The share mode to parse</param>
         /// <returns>The corresponding <see cref="LockShareMode"/></returns>
-        public static LockShareMode Parse([NotNull] string shareMode)
+        public static LockShareMode Parse( string shareMode)
         {
             if (shareMode == null)
                 throw new ArgumentNullException(nameof(shareMode));

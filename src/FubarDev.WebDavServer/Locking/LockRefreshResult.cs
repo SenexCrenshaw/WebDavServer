@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Locking
 {
@@ -36,13 +36,13 @@ namespace FubarDev.WebDavServer.Locking
         /// <summary>
         /// Gets the active lock when locking succeeded
         /// </summary>
-        [CanBeNull]
+        
         public IReadOnlyCollection<IActiveLock> RefreshedLocks { get; }
 
         /// <summary>
         /// Gets the error response to return
         /// </summary>
-        [CanBeNull]
+        
         public response ErrorResponse { get; }
     }
 }

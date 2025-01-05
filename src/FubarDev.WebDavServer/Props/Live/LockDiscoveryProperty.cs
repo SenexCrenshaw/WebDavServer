@@ -12,7 +12,7 @@ using FubarDev.WebDavServer.FileSystem;
 using FubarDev.WebDavServer.Locking;
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props.Live
 {
@@ -26,17 +26,17 @@ namespace FubarDev.WebDavServer.Props.Live
         /// </summary>
         public static readonly XName PropertyName = WebDavXml.Dav + "lockdiscovery";
 
-        [CanBeNull]
+        
         private readonly ILockManager _lockManager;
 
-        [NotNull]
+        
         private readonly string _entryPath;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LockDiscoveryProperty"/> class.
         /// </summary>
         /// <param name="entry">The file system entry</param>
-        public LockDiscoveryProperty([NotNull] IEntry entry)
+        public LockDiscoveryProperty( IEntry entry)
         {
             _lockManager = entry.FileSystem.LockManager;
             _entryPath = entry.Path.OriginalString;

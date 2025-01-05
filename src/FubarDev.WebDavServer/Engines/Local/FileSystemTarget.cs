@@ -8,7 +8,7 @@ using System.Linq;
 
 using FubarDev.WebDavServer.FileSystem;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Engines.Local
 {
@@ -25,7 +25,7 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// <param name="destinationUrl">The destination URL for this entry</param>
         /// <param name="document">The underlying document</param>
         /// <param name="targetActions">The target actions implementation to use</param>
-        public FileSystemTarget([NotNull] Uri destinationUrl, [NotNull] IDocument document, [NotNull] ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
+        public FileSystemTarget( Uri destinationUrl,  IDocument document,  ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
         {
             DestinationUrl = destinationUrl;
             Document = document;
@@ -40,7 +40,7 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// <param name="destinationUrl">The destination URL for this entry</param>
         /// <param name="collection">The underlying collection</param>
         /// <param name="targetActions">The target actions implementation to use</param>
-        public FileSystemTarget([NotNull] Uri destinationUrl, [NotNull] ICollection collection, [NotNull] ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
+        public FileSystemTarget( Uri destinationUrl,  ICollection collection,  ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
         {
             DestinationUrl = destinationUrl;
             Collection = collection;
@@ -57,10 +57,10 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// <param name="name">The name of the missing target</param>
         /// <param name="targetActions">The target actions implementation to use</param>
         public FileSystemTarget(
-            [NotNull] Uri destinationUrl,
-            [NotNull] ICollection collection,
-            [NotNull] string name,
-            [NotNull] ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
+             Uri destinationUrl,
+             ICollection collection,
+             string name,
+             ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
         {
             DestinationUrl = destinationUrl;
             Parent = collection;
@@ -77,7 +77,7 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// <summary>
         /// Gets the parent collection
         /// </summary>
-        [CanBeNull]
+        
         public ICollection Parent { get; }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// <remarks>
         /// Might be <see langword="null"/>, when the target is a collection instead.
         /// </remarks>
-        [CanBeNull]
+        
         public IDocument Document { get; }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// <remarks>
         /// Might be <see langword="null"/>, when the target is a document instead.
         /// </remarks>
-        [CanBeNull]
+        
         public ICollection Collection { get; }
 
         /// <summary>
@@ -105,11 +105,11 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// <param name="destinationUri">The destination URL for the element found by the <see cref="IFileSystem.SelectAsync"/></param>
         /// <param name="targetActions">The target actions implementation to use</param>
         /// <returns>The new file system target</returns>
-        [NotNull]
+        
         public static FileSystemTarget FromSelectionResult(
-            [NotNull] SelectionResult selectionResult,
-            [NotNull] Uri destinationUri,
-            [NotNull] ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
+             SelectionResult selectionResult,
+             Uri destinationUri,
+             ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> targetActions)
         {
             if (selectionResult.IsMissing)
             {
@@ -134,7 +134,7 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// This only works when this <see cref="FileSystemTarget"/> has an underlying collection.
         /// </remarks>
         /// <returns>The new collection target</returns>
-        [NotNull]
+        
         public CollectionTarget NewCollectionTarget()
         {
             if (Collection == null)
@@ -151,7 +151,7 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// This only works when this <see cref="FileSystemTarget"/> has an underlying collection.
         /// </remarks>
         /// <returns>The new document target</returns>
-        [NotNull]
+        
         public DocumentTarget NewDocumentTarget()
         {
             if (Document == null || Parent == null)
@@ -168,7 +168,7 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// This only works when this <see cref="FileSystemTarget"/> has an underlying collection.
         /// </remarks>
         /// <returns>The new missing target</returns>
-        [NotNull]
+        
         public MissingTarget NewMissingTarget()
         {
             if (Parent == null)

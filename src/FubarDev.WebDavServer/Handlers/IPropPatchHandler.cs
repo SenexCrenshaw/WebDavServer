@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Handlers
 {
@@ -23,8 +23,8 @@ namespace FubarDev.WebDavServer.Handlers
         /// <param name="request">The properties to patch</param>
         /// <param name="cancellationToken">The cancellcation token</param>
         /// <returns>The result of the operation</returns>
-        [NotNull]
-        [ItemNotNull]
-        Task<IWebDavResult> PropPatchAsync([NotNull] string path, [NotNull] propertyupdate request, CancellationToken cancellationToken);
+        
+        
+        Task<IWebDavResult> PropPatchAsync( string path,  propertyupdate request, CancellationToken cancellationToken);
     }
 }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using FubarDev.WebDavServer.Model;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.FileSystem.DotNet
 {
@@ -34,11 +34,11 @@ namespace FubarDev.WebDavServer.FileSystem.DotNet
         /// <param name="name">The entry name (<see langword="null"/> when <see cref="FileSystemInfo.Name"/> of <see cref="DotNetEntry.Info"/> should be used)</param>
         /// <param name="isRoot">Is this the file systems root directory?</param>
         public DotNetDirectory(
-            [NotNull] DotNetFileSystem fileSystem,
-            [CanBeNull] ICollection parent,
-            [NotNull] DirectoryInfo info,
-            [NotNull] Uri path,
-            [CanBeNull] string name,
+             DotNetFileSystem fileSystem,
+             ICollection parent,
+             DirectoryInfo info,
+             Uri path,
+             string name,
             bool isRoot = false)
             : base(fileSystem, parent, info, path, name)
         {

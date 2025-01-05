@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer
 {
@@ -22,21 +22,21 @@ namespace FubarDev.WebDavServer
         /// <summary>
         /// The synchronization object protecting <c>_instance</c>.
         /// </summary>
-        [NotNull]
+        
         private readonly object _mutex = new object();
 
         /// <summary>
         /// The underlying lazy task.
         /// </summary>
-        [NotNull]
-        [ItemNotNull]
+        
+        
         private readonly Lazy<Task<T>> _instance;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncLazy&lt;T&gt;"/> class.
         /// </summary>
         /// <param name="factory">The asynchronous delegate that is invoked to produce the value when it is needed. May not be <c>null</c>.</param>
-        public AsyncLazy([NotNull] Func<Task<T>> factory)
+        public AsyncLazy( Func<Task<T>> factory)
         {
             if (factory == null)
                 throw new ArgumentNullException(nameof(factory));
@@ -71,7 +71,7 @@ namespace FubarDev.WebDavServer
         /// <remarks>
         /// Starts the asynchronous factory method, if it has not already started.
         /// </remarks>
-        [NotNull]
+        
         public Task<T> Task
         {
             get
@@ -123,10 +123,10 @@ namespace FubarDev.WebDavServer
         [DebuggerNonUserCode]
         internal sealed class DebugView
         {
-            [NotNull]
+            
             private readonly AsyncLazy<T> _lazy;
 
-            public DebugView([NotNull] AsyncLazy<T> lazy)
+            public DebugView( AsyncLazy<T> lazy)
             {
                 _lazy = lazy;
             }

@@ -18,7 +18,7 @@ using FubarDev.WebDavServer.Props.Dead;
 using FubarDev.WebDavServer.Props.Live;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Dispatchers
 {
@@ -27,10 +27,10 @@ namespace FubarDev.WebDavServer.Dispatchers
     /// </summary>
     public class WebDavDispatcherClass2 : IWebDavClass2
     {
-        [CanBeNull]
+        
         private readonly ILockHandler _lockHandler;
 
-        [CanBeNull]
+        
         private readonly IUnlockHandler _unlockHandler;
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace FubarDev.WebDavServer.Dispatchers
         /// </summary>
         /// <param name="handlers">The WebDAV class 2 handlers</param>
         /// <param name="context">The WebDAV context</param>
-        public WebDavDispatcherClass2([NotNull] [ItemNotNull] IEnumerable<IClass2Handler> handlers, [NotNull] IWebDavContext context)
+        public WebDavDispatcherClass2(  IEnumerable<IClass2Handler> handlers,  IWebDavContext context)
         {
             var httpMethods = new HashSet<string>();
 

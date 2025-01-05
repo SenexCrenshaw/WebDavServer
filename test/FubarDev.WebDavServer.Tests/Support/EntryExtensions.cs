@@ -10,35 +10,38 @@ using System.Xml.Linq;
 using FubarDev.WebDavServer.FileSystem;
 using FubarDev.WebDavServer.Props.Dead;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Tests.Support
 {
     public static class EntryExtensions
     {
         public static Task<IReadOnlyCollection<XElement>> GetPropertyElementsAsync(
-            [NotNull] this IEntry entry,
-            [NotNull] IWebDavDispatcher dispatcher,
+             this IEntry entry,
+             IWebDavDispatcher dispatcher,
             CancellationToken ct)
         {
             return GetPropertyElementsAsync(entry, dispatcher, false, ct);
         }
 
         public static async Task<IReadOnlyCollection<XElement>> GetPropertyElementsAsync(
-            [NotNull] this IEntry entry,
-            [NotNull] IWebDavDispatcher dispatcher,
+             this IEntry entry,
+             IWebDavDispatcher dispatcher,
             bool skipEtag,
             CancellationToken ct)
         {
-            var result = new List<XElement>();
-            using (var propEnum = entry.GetProperties(dispatcher).GetEnumerator())
+            List<XElement> result = [];
+            await using (IAsyncEnumerator<Props.IUntypedReadableProperty> propEnum = entry.GetProperties(dispatcher).GetAsyncEnumerator(ct))
             {
-                while (await propEnum.MoveNext(ct).ConfigureAwait(false))
+                while (await propEnum.MoveNextAsync(ct).ConfigureAwait(false))
                 {
-                    var prop = propEnum.Current;
+                    Props.IUntypedReadableProperty prop = propEnum.Current;
                     if (skipEtag && prop.Name == GetETagProperty.PropertyName)
+                    {
                         continue;
-                    var element = await prop.GetXmlValueAsync(ct).ConfigureAwait(false);
+                    }
+
+                    XElement element = await prop.GetXmlValueAsync(ct).ConfigureAwait(false);
                     result.Add(element);
                 }
             }

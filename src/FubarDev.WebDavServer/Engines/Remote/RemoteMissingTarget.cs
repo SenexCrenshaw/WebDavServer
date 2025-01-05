@@ -6,7 +6,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Engines.Remote
 {
@@ -15,7 +15,7 @@ namespace FubarDev.WebDavServer.Engines.Remote
     /// </summary>
     public class RemoteMissingTarget : IMissingTarget<RemoteCollectionTarget, RemoteDocumentTarget, RemoteMissingTarget>
     {
-        [NotNull]
+        
         private readonly IRemoteTargetActions _targetActions;
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace FubarDev.WebDavServer.Engines.Remote
         /// <param name="destinationUrl">The destination URL</param>
         /// <param name="name">The name of the missing remote targe</param>
         /// <param name="targetActions">The target actions implementation to use</param>
-        public RemoteMissingTarget([NotNull] RemoteCollectionTarget parent, [NotNull] Uri destinationUrl, [NotNull] string name, [NotNull] IRemoteTargetActions targetActions)
+        public RemoteMissingTarget( RemoteCollectionTarget parent,  Uri destinationUrl,  string name,  IRemoteTargetActions targetActions)
         {
             _targetActions = targetActions;
             Parent = parent;
@@ -42,7 +42,7 @@ namespace FubarDev.WebDavServer.Engines.Remote
         /// <summary>
         /// Gets the parent remote collection
         /// </summary>
-        [NotNull]
+        
         public RemoteCollectionTarget Parent { get; }
 
         /// <inheritdoc />

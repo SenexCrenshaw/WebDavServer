@@ -5,7 +5,7 @@
 using System;
 using System.Xml.Linq;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Locking
 {
@@ -17,13 +17,13 @@ namespace FubarDev.WebDavServer.Locking
         /// <summary>
         /// Gets the path the lock is for
         /// </summary>
-        [NotNull]
+        
         string Path { get; }
 
         /// <summary>
         /// Gets the href the lock is for
         /// </summary>
-        [NotNull]
+        
         string Href { get; }
 
         /// <summary>
@@ -35,14 +35,14 @@ namespace FubarDev.WebDavServer.Locking
         /// Gets the access type of the lock
         /// </summary>
         /// <seealso cref="LockAccessType"/>
-        [NotNull]
+        
         string AccessType { get; }
 
         /// <summary>
         /// Gets the share mode of the lock
         /// </summary>
         /// <seealso cref="LockShareMode"/>
-        [NotNull]
+        
         string ShareMode { get; }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace FubarDev.WebDavServer.Locking
         /// <returns>
         /// The XML identifying the owner of the lock
         /// </returns>
-        [CanBeNull]
+        
         XElement GetOwner();
     }
 }

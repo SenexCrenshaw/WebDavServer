@@ -12,7 +12,7 @@ using FubarDev.WebDavServer.Props.Dead;
 using FubarDev.WebDavServer.Props.Store;
 using FubarDev.WebDavServer.Tests.Support.ServiceBuilders;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,7 +26,7 @@ namespace FubarDev.WebDavServer.Tests.PropertyStore
 
         public InMemoryPropTests(InMemoryFileSystemServices fsServices)
         {
-            var serviceScopeFactory = fsServices.ServiceProvider.GetRequiredService<IServiceScopeFactory>();
+            IServiceScopeFactory serviceScopeFactory = fsServices.ServiceProvider.GetRequiredService<IServiceScopeFactory>();
             _serviceScope = serviceScopeFactory.CreateScope();
             FileSystem = _serviceScope.ServiceProvider.GetRequiredService<IFileSystem>();
             Dispatcher = _serviceScope.ServiceProvider.GetRequiredService<IWebDavDispatcher>();
@@ -36,7 +36,7 @@ namespace FubarDev.WebDavServer.Tests.PropertyStore
 
         public IFileSystem FileSystem { get; }
 
-        [NotNull]
+
         public IPropertyStore PropertyStore
         {
             get
@@ -49,46 +49,46 @@ namespace FubarDev.WebDavServer.Tests.PropertyStore
         [Fact]
         public async Task Empty()
         {
-            var ct = CancellationToken.None;
-            var root = await FileSystem.Root;
-            var displayNameProperty = await GetDisplayNamePropertyAsync(root, ct).ConfigureAwait(false);
+            CancellationToken ct = CancellationToken.None;
+            ICollection root = await FileSystem.Root;
+            DisplayNameProperty displayNameProperty = await GetDisplayNamePropertyAsync(root, ct).ConfigureAwait(false);
             Assert.Equal(string.Empty, await displayNameProperty.GetValueAsync(ct).ConfigureAwait(false));
         }
 
         [Fact]
         public async Task DocumentWithExtension()
         {
-            var ct = CancellationToken.None;
+            CancellationToken ct = CancellationToken.None;
 
-            var root = await FileSystem.Root;
-            var doc = await root.CreateDocumentAsync("test1.txt", ct).ConfigureAwait(false);
+            ICollection root = await FileSystem.Root;
+            IDocument doc = await root.CreateDocumentAsync("test1.txt", ct).ConfigureAwait(false);
 
-            var displayNameProperty = await GetDisplayNamePropertyAsync(doc, ct).ConfigureAwait(false);
+            DisplayNameProperty displayNameProperty = await GetDisplayNamePropertyAsync(doc, ct).ConfigureAwait(false);
             Assert.Equal("test1.txt", await displayNameProperty.GetValueAsync(ct).ConfigureAwait(false));
         }
 
         [Fact]
         public async Task SameNameDocumentsInDifferentCollections()
         {
-            var ct = CancellationToken.None;
+            CancellationToken ct = CancellationToken.None;
 
-            var root = await FileSystem.Root;
-            var coll1 = await root.CreateCollectionAsync("coll1", ct).ConfigureAwait(false);
-            var docRoot = await root.CreateDocumentAsync("test1.txt", ct).ConfigureAwait(false);
-            var docColl1 = await coll1.CreateDocumentAsync("test1.txt", ct).ConfigureAwait(false);
-            var eTagDocRoot = await PropertyStore.GetETagAsync(docRoot, ct).ConfigureAwait(false);
-            var eTagDocColl1 = await PropertyStore.GetETagAsync(docColl1, ct).ConfigureAwait(false);
+            ICollection root = await FileSystem.Root;
+            ICollection coll1 = await root.CreateCollectionAsync("coll1", ct).ConfigureAwait(false);
+            IDocument docRoot = await root.CreateDocumentAsync("test1.txt", ct).ConfigureAwait(false);
+            IDocument docColl1 = await coll1.CreateDocumentAsync("test1.txt", ct).ConfigureAwait(false);
+            Model.Headers.EntityTag eTagDocRoot = await PropertyStore.GetETagAsync(docRoot, ct).ConfigureAwait(false);
+            Model.Headers.EntityTag eTagDocColl1 = await PropertyStore.GetETagAsync(docColl1, ct).ConfigureAwait(false);
             Assert.NotEqual(eTagDocRoot, eTagDocColl1);
         }
 
         [Fact]
         public async Task DisplayNameChangeable()
         {
-            var ct = CancellationToken.None;
+            CancellationToken ct = CancellationToken.None;
 
-            var root = await FileSystem.Root;
-            var doc = await root.CreateDocumentAsync("test1.txt", ct).ConfigureAwait(false);
-            var displayNameProperty = await GetDisplayNamePropertyAsync(doc, ct).ConfigureAwait(false);
+            ICollection root = await FileSystem.Root;
+            IDocument doc = await root.CreateDocumentAsync("test1.txt", ct).ConfigureAwait(false);
+            DisplayNameProperty displayNameProperty = await GetDisplayNamePropertyAsync(doc, ct).ConfigureAwait(false);
 
             await displayNameProperty.SetValueAsync("test1-Dokument", ct).ConfigureAwait(false);
             Assert.Equal("test1-Dokument", await displayNameProperty.GetValueAsync(ct).ConfigureAwait(false));
@@ -103,11 +103,11 @@ namespace FubarDev.WebDavServer.Tests.PropertyStore
         [InlineData("test1.png", "image/png")]
         public async Task ContentTypeDetected(string fileName, string contentType)
         {
-            var ct = CancellationToken.None;
+            CancellationToken ct = CancellationToken.None;
 
-            var root = await FileSystem.Root;
-            var doc = await root.CreateDocumentAsync(fileName, ct).ConfigureAwait(false);
-            var contentTypeProperty = await GetContentTypePropertyAsync(doc, ct).ConfigureAwait(false);
+            ICollection root = await FileSystem.Root;
+            IDocument doc = await root.CreateDocumentAsync(fileName, ct).ConfigureAwait(false);
+            GetContentTypeProperty contentTypeProperty = await GetContentTypePropertyAsync(doc, ct).ConfigureAwait(false);
 
             Assert.Equal(contentType, await contentTypeProperty.GetValueAsync(ct).ConfigureAwait(false));
         }
@@ -119,17 +119,17 @@ namespace FubarDev.WebDavServer.Tests.PropertyStore
 
         private async Task<DisplayNameProperty> GetDisplayNamePropertyAsync(IEntry entry, CancellationToken ct)
         {
-            var untypedDisplayNameProperty = await entry.GetProperties(Dispatcher).Single(x => x.Name == DisplayNameProperty.PropertyName, ct).ConfigureAwait(false);
+            Props.IUntypedReadableProperty untypedDisplayNameProperty = await entry.GetProperties(Dispatcher).SingleAsync(x => x.Name == DisplayNameProperty.PropertyName, ct).ConfigureAwait(false);
             Assert.NotNull(untypedDisplayNameProperty);
-            var displayNameProperty = Assert.IsType<DisplayNameProperty>(untypedDisplayNameProperty);
+            DisplayNameProperty displayNameProperty = Assert.IsType<DisplayNameProperty>(untypedDisplayNameProperty);
             return displayNameProperty;
         }
 
         private async Task<GetContentTypeProperty> GetContentTypePropertyAsync(IEntry entry, CancellationToken ct)
         {
-            var untypedContentTypeProperty = await entry.GetProperties(Dispatcher).Single(x => x.Name == GetContentTypeProperty.PropertyName, ct).ConfigureAwait(false);
+            Props.IUntypedReadableProperty untypedContentTypeProperty = await entry.GetProperties(Dispatcher).SingleAsync(x => x.Name == GetContentTypeProperty.PropertyName, ct).ConfigureAwait(false);
             Assert.NotNull(untypedContentTypeProperty);
-            var contentTypeProperty = Assert.IsType<GetContentTypeProperty>(untypedContentTypeProperty);
+            GetContentTypeProperty contentTypeProperty = Assert.IsType<GetContentTypeProperty>(untypedContentTypeProperty);
             return contentTypeProperty;
         }
     }

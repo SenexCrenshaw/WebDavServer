@@ -8,7 +8,7 @@ using System.Security.Principal;
 using FubarDev.WebDavServer.Locking;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Extensions.Options;
 
@@ -19,16 +19,16 @@ namespace FubarDev.WebDavServer.FileSystem.DotNet
     /// </summary>
     public class DotNetFileSystemFactory : IFileSystemFactory
     {
-        [NotNull]
+        
         private readonly IPathTraversalEngine _pathTraversalEngine;
 
-        [CanBeNull]
+        
         private readonly IPropertyStoreFactory _propertyStoreFactory;
 
-        [CanBeNull]
+        
         private readonly ILockManager _lockManager;
 
-        [NotNull]
+        
         private readonly DotNetFileSystemOptions _options;
 
         /// <summary>
@@ -39,8 +39,8 @@ namespace FubarDev.WebDavServer.FileSystem.DotNet
         /// <param name="propertyStoreFactory">The store for dead properties</param>
         /// <param name="lockManager">The global lock manager</param>
         public DotNetFileSystemFactory(
-            [NotNull] IOptions<DotNetFileSystemOptions> options,
-            [NotNull] IPathTraversalEngine pathTraversalEngine,
+             IOptions<DotNetFileSystemOptions> options,
+             IPathTraversalEngine pathTraversalEngine,
             IPropertyStoreFactory propertyStoreFactory = null,
             ILockManager lockManager = null)
         {

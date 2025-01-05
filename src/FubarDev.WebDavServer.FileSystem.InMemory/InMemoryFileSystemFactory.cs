@@ -10,7 +10,7 @@ using FubarDev.WebDavServer.Locking;
 using FubarDev.WebDavServer.Props.Store;
 using FubarDev.WebDavServer.Utils;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.FileSystem.InMemory
 {
@@ -19,19 +19,19 @@ namespace FubarDev.WebDavServer.FileSystem.InMemory
     /// </summary>
     public class InMemoryFileSystemFactory : IFileSystemFactory
     {
-        [NotNull]
+        
         private readonly Dictionary<FileSystemKey, InMemoryFileSystem> _fileSystems = new Dictionary<FileSystemKey, InMemoryFileSystem>();
 
-        [NotNull]
+        
         private readonly IPathTraversalEngine _pathTraversalEngine;
 
-        [NotNull]
+        
         private readonly ISystemClock _systemClock;
 
-        [CanBeNull]
+        
         private readonly ILockManager _lockManager;
 
-        [CanBeNull]
+        
         private readonly IPropertyStoreFactory _propertyStoreFactory;
 
         /// <summary>
@@ -42,8 +42,8 @@ namespace FubarDev.WebDavServer.FileSystem.InMemory
         /// <param name="lockManager">The global lock manager</param>
         /// <param name="propertyStoreFactory">The store for dead properties</param>
         public InMemoryFileSystemFactory(
-            [NotNull] IPathTraversalEngine pathTraversalEngine,
-            [NotNull] ISystemClock systemClock,
+             IPathTraversalEngine pathTraversalEngine,
+             ISystemClock systemClock,
             ILockManager lockManager = null,
             IPropertyStoreFactory propertyStoreFactory = null)
         {
@@ -82,7 +82,7 @@ namespace FubarDev.WebDavServer.FileSystem.InMemory
         /// <param name="mountPoint">The mount point</param>
         /// <param name="principal">The principal the file system was created for</param>
         /// <param name="fileSystem">The created file system</param>
-        protected virtual void InitializeFileSystem([CanBeNull] ICollection mountPoint, [NotNull] IPrincipal principal, [NotNull] InMemoryFileSystem fileSystem)
+        protected virtual void InitializeFileSystem( ICollection mountPoint,  IPrincipal principal,  InMemoryFileSystem fileSystem)
         {
         }
 
@@ -92,7 +92,7 @@ namespace FubarDev.WebDavServer.FileSystem.InMemory
         /// <param name="mountPoint">The mount point</param>
         /// <param name="principal">The principal the file system was created for</param>
         /// <param name="fileSystem">The created file system</param>
-        protected virtual void UpdateFileSystem([CanBeNull] ICollection mountPoint, [NotNull] IPrincipal principal, [NotNull] InMemoryFileSystem fileSystem)
+        protected virtual void UpdateFileSystem( ICollection mountPoint,  IPrincipal principal,  InMemoryFileSystem fileSystem)
         {
         }
 

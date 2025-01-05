@@ -4,7 +4,7 @@
 
 using System;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.FileSystem.Mount
 {
@@ -18,12 +18,12 @@ namespace FubarDev.WebDavServer.FileSystem.Mount
         /// </summary>
         /// <param name="source">The source path</param>
         /// <param name="destination">The destination file system</param>
-        void Mount([NotNull] Uri source, [NotNull] IFileSystem destination);
+        void Mount( Uri source,  IFileSystem destination);
 
         /// <summary>
         /// Removes a mount from the <paramref name="source"/>
         /// </summary>
         /// <param name="source">The source path</param>
-        void Unmount([NotNull] Uri source);
+        void Unmount( Uri source);
     }
 }

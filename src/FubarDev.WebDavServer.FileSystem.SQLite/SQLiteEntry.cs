@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.Model.Headers;
 
-using JetBrains.Annotations;
+
 
 using SQLite;
 
@@ -28,7 +28,7 @@ namespace FubarDev.WebDavServer.FileSystem.SQLite
         /// <param name="info">The file system information</param>
         /// <param name="path">The root-relative path of this entry</param>
         /// <param name="name">The entry name (<see langword="null"/> when <see cref="FileEntry.Name"/> of <see cref="SQLiteEntry.Info"/> should be used)</param>
-        protected SQLiteEntry(SQLiteFileSystem fileSystem, ICollection parent, FileEntry info, Uri path, [CanBeNull] string name)
+        protected SQLiteEntry(SQLiteFileSystem fileSystem, ICollection parent, FileEntry info, Uri path,  string name)
         {
             Parent = parent;
             Info = info;

@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Text;
 using System.Xml.Linq;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props.Converters
 {
@@ -24,7 +24,7 @@ namespace FubarDev.WebDavServer.Props.Converters
         /// </summary>
         /// <param name="s">The string to parse</param>
         /// <returns>The parsed date</returns>
-        public static DateTimeOffset Parse([NotNull] string s)
+        public static DateTimeOffset Parse( string s)
         {
             var dateTimeSeparatorIndex = s.IndexOfAny(_dateTimeSeparators);
             if (dateTimeSeparatorIndex == -1)

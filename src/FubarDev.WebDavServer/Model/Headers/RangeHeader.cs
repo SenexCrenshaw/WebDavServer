@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Model.Headers
 {
@@ -23,12 +23,12 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// </summary>
         /// <param name="unit">The unit of the range (currently only <c>bytes</c> is allowed)</param>
         /// <param name="rangeItems">The HTTP range items for this range</param>
-        public RangeHeader([NotNull] string unit, params RangeHeaderItem[] rangeItems)
+        public RangeHeader( string unit, params RangeHeaderItem[] rangeItems)
             : this(unit, false, rangeItems)
         {
         }
 
-        private RangeHeader([NotNull] string unit, bool ignoreInvalidUnit, IReadOnlyCollection<RangeHeaderItem> rangeItems)
+        private RangeHeader( string unit, bool ignoreInvalidUnit, IReadOnlyCollection<RangeHeaderItem> rangeItems)
         {
             if (!ignoreInvalidUnit && !string.IsNullOrEmpty(unit) && unit != "bytes")
                 throw new NotSupportedException();
@@ -39,13 +39,13 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// <summary>
         /// Gets the unit for this HTTP range
         /// </summary>
-        [NotNull]
+        
         public string Unit { get; }
 
         /// <summary>
         /// Gets the HTTP range items
         /// </summary>
-        [NotNull]
+        
         public IReadOnlyCollection<RangeHeaderItem> RangeItems { get; }
 
         /// <summary>
@@ -56,8 +56,8 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// </remarks>
         /// <param name="range">The range to parse</param>
         /// <returns>The new <see cref="RangeHeader"/></returns>
-        [NotNull]
-        public static RangeHeader Parse([NotNull] string range)
+        
+        public static RangeHeader Parse( string range)
         {
             return Parse(range.Split(','));
         }
@@ -70,8 +70,8 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// </remarks>
         /// <param name="ranges">The ranges to parse</param>
         /// <returns>The new <see cref="RangeHeader"/></returns>
-        [NotNull]
-        public static RangeHeader Parse([NotNull][ItemNotNull] IEnumerable<string> ranges)
+        
+        public static RangeHeader Parse( IEnumerable<string> ranges)
         {
             var rangeItems = new List<RangeHeaderItem>();
             var firstEntry = true;
@@ -129,7 +129,7 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// </remarks>
         /// <param name="rangeItem">The <see cref="RangeHeaderItem"/> to get the textual representation for</param>
         /// <returns>The textual representation of <paramref name="rangeItem"/></returns>
-        [NotNull]
+        
         public virtual string ToString(RangeHeaderItem rangeItem)
         {
             return ToString(rangeItem, null);
@@ -144,7 +144,7 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// <param name="rangeItem">The <see cref="RangeHeaderItem"/> to get the textual representation for</param>
         /// <param name="length">The length value to be used in the textual representation</param>
         /// <returns>The textual representation of <paramref name="rangeItem"/></returns>
-        [NotNull]
+        
         public virtual string ToString(RangeHeaderItem rangeItem, long? length)
         {
             return $"{Unit} {rangeItem}/{length?.ToString(CultureInfo.InvariantCulture) ?? "*"}";
@@ -155,7 +155,7 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// </summary>
         /// <param name="totalLength">The length of the resource</param>
         /// <returns>The list of normalized byte ranges</returns>
-        [NotNull]
+        
         public IReadOnlyList<NormalizedRangeItem> Normalize(long totalLength)
         {
             var rangeItems = RangeItems.Select(x => x.Normalize(totalLength))

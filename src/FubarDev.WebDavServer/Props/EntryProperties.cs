@@ -14,7 +14,7 @@ using FubarDev.WebDavServer.Props.Dead;
 using FubarDev.WebDavServer.Props.Live;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props
 {
@@ -23,14 +23,14 @@ namespace FubarDev.WebDavServer.Props
     /// </summary>
     public class EntryProperties : IAsyncEnumerable<IUntypedReadableProperty>
     {
-        [NotNull]
+
         private readonly IEntry _entry;
 
-        [NotNull]
-        [ItemNotNull]
+
+
         private readonly IEnumerable<IUntypedReadableProperty> _predefinedProperties;
 
-        [CanBeNull]
+
         private readonly IPropertyStore _propertyStore;
 
         private readonly int? _maxCost;
@@ -46,9 +46,9 @@ namespace FubarDev.WebDavServer.Props
         /// <param name="maxCost">The maximum cost of the properties to return</param>
         /// <param name="returnInvalidProperties">Do we want to get invalid live properties?</param>
         public EntryProperties(
-            [NotNull] IEntry entry,
-            [NotNull] [ItemNotNull] IEnumerable<IUntypedReadableProperty> predefinedProperties,
-            [CanBeNull] IPropertyStore propertyStore,
+             IEntry entry,
+              IEnumerable<IUntypedReadableProperty> predefinedProperties,
+             IPropertyStore propertyStore,
             int? maxCost,
             bool returnInvalidProperties)
         {
@@ -60,37 +60,37 @@ namespace FubarDev.WebDavServer.Props
         }
 
         /// <inheritdoc />
-        public IAsyncEnumerator<IUntypedReadableProperty> GetEnumerator()
+        public IAsyncEnumerator<IUntypedReadableProperty> GetAsyncEnumerator(CancellationToken cancellationToken)
         {
             return new PropertiesEnumerator(_entry, _predefinedProperties, _propertyStore, _maxCost, _returnInvalidProperties);
         }
 
         private class PropertiesEnumerator : IAsyncEnumerator<IUntypedReadableProperty>
         {
-            [NotNull]
+
             private readonly IEntry _entry;
 
-            [CanBeNull]
+
             private readonly IPropertyStore _propertyStore;
 
             private readonly int? _maxCost;
 
             private readonly bool _returnInvalidProperties;
 
-            [NotNull]
+
             private readonly IEnumerator<IUntypedReadableProperty> _predefinedPropertiesEnumerator;
 
-            private readonly Dictionary<XName, IUntypedReadableProperty> _emittedProperties = new Dictionary<XName, IUntypedReadableProperty>();
+            private readonly Dictionary<XName, IUntypedReadableProperty> _emittedProperties = [];
 
             private bool _predefinedPropertiesFinished;
 
-            [CanBeNull]
+
             private IEnumerator<IDeadProperty> _deadPropertiesEnumerator;
 
             public PropertiesEnumerator(
-                [NotNull] IEntry entry,
-                [NotNull] [ItemNotNull] IEnumerable<IUntypedReadableProperty> predefinedProperties,
-                [CanBeNull] IPropertyStore propertyStore,
+                 IEntry entry,
+                  IEnumerable<IUntypedReadableProperty> predefinedProperties,
+                 IPropertyStore propertyStore,
                 int? maxCost,
                 bool returnInvalidProperties)
             {
@@ -99,12 +99,14 @@ namespace FubarDev.WebDavServer.Props
                 _maxCost = maxCost;
                 _returnInvalidProperties = returnInvalidProperties;
 
-                var emittedProperties = new HashSet<XName>();
-                var predefinedPropertiesList = new List<IUntypedReadableProperty>();
-                foreach (var property in predefinedProperties)
+                HashSet<XName> emittedProperties = [];
+                List<IUntypedReadableProperty> predefinedPropertiesList = [];
+                foreach (IUntypedReadableProperty property in predefinedProperties)
                 {
                     if (emittedProperties.Add(property.Name))
+                    {
                         predefinedPropertiesList.Add(property);
+                    }
                 }
 
                 _predefinedPropertiesEnumerator = predefinedPropertiesList.GetEnumerator();
@@ -112,21 +114,19 @@ namespace FubarDev.WebDavServer.Props
 
             public IUntypedReadableProperty Current { get; private set; }
 
-#pragma warning disable IDE1006 // Benennungsstile
-            public async Task<bool> MoveNext(CancellationToken cancellationToken)
-#pragma warning restore IDE1006 // Benennungsstile
+            async ValueTask<bool> IAsyncEnumerator<IUntypedReadableProperty>.MoveNextAsync()
             {
+                CancellationToken cancellationToken = CancellationToken.None;
                 while (true)
                 {
-                    var result = await GetNextPropertyAsync(cancellationToken).ConfigureAwait(false);
+                    IUntypedReadableProperty result = await GetNextPropertyAsync(cancellationToken).ConfigureAwait(false);
                     if (result == null)
                     {
                         Current = null;
                         return false;
                     }
 
-                    IUntypedReadableProperty oldProperty;
-                    if (_emittedProperties.TryGetValue(result.Name, out oldProperty))
+                    if (_emittedProperties.TryGetValue(result.Name, out IUntypedReadableProperty oldProperty))
                     {
                         // Property was already emitted - don't return it again.
                         // The predefined dead properties are reading their values from the property store
@@ -136,8 +136,7 @@ namespace FubarDev.WebDavServer.Props
 
                     if (!_returnInvalidProperties)
                     {
-                        var liveProp = result as ILiveProperty;
-                        if (liveProp != null && !await liveProp.IsValidAsync(cancellationToken).ConfigureAwait(false))
+                        if (result is ILiveProperty liveProp && !await liveProp.IsValidAsync(cancellationToken).ConfigureAwait(false))
                         {
                             // The properties value is not valid
                             continue;
@@ -168,22 +167,28 @@ namespace FubarDev.WebDavServer.Props
                     _predefinedPropertiesFinished = true;
 
                     if (_propertyStore == null || (_maxCost.HasValue && _propertyStore.Cost > _maxCost))
+                    {
                         return null;
+                    }
 
-                    var deadProperties = await _propertyStore.LoadAsync(_entry, cancellationToken).ConfigureAwait(false);
+                    IReadOnlyCollection<IDeadProperty> deadProperties = await _propertyStore.LoadAsync(_entry, cancellationToken).ConfigureAwait(false);
                     _deadPropertiesEnumerator = deadProperties.GetEnumerator();
                 }
 
                 if (_propertyStore == null || (_maxCost.HasValue && _propertyStore.Cost > _maxCost))
+                {
                     return null;
+                }
 
                 Debug.Assert(_deadPropertiesEnumerator != null, "_deadPropertiesEnumerator != null");
-                if (_deadPropertiesEnumerator == null)
-                    throw new InvalidOperationException("Internal error: The dead properties enumerator was not initialized");
-                if (!_deadPropertiesEnumerator.MoveNext())
-                    return null;
-
-                return _deadPropertiesEnumerator.Current;
+                return _deadPropertiesEnumerator == null
+                    ? throw new InvalidOperationException("Internal error: The dead properties enumerator was not initialized")
+                    : !_deadPropertiesEnumerator.MoveNext() ? null : (IUntypedReadableProperty)_deadPropertiesEnumerator.Current;
+            }
+            public ValueTask DisposeAsync()
+            {
+                Dispose();
+                return ValueTask.CompletedTask;
             }
         }
     }

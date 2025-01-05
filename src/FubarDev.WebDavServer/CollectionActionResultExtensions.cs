@@ -9,7 +9,7 @@ using System.Linq;
 using FubarDev.WebDavServer.Engines;
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer
 {
@@ -24,7 +24,7 @@ namespace FubarDev.WebDavServer
         /// <param name="collectionResult">The <see cref="CollectionActionResult"/> to evaluate</param>
         /// <param name="context">The <see cref="IWebDavContext"/> to create the response for</param>
         /// <returns>The created response</returns>
-        public static IWebDavResult Evaluate([NotNull] this CollectionActionResult collectionResult, [NotNull] IWebDavContext context)
+        public static IWebDavResult Evaluate( this CollectionActionResult collectionResult,  IWebDavContext context)
         {
             if (collectionResult.Status == ActionStatus.Ignored)
             {
@@ -84,8 +84,8 @@ namespace FubarDev.WebDavServer
             throw new NotSupportedException();
         }
 
-        [NotNull]
-        private static response CreateResponse(ActionStatus status, [NotNull] [ItemNotNull] IEnumerable<ActionResult> result, [NotNull] IWebDavContext host)
+        
+        private static response CreateResponse(ActionStatus status,   IEnumerable<ActionResult> result,  IWebDavContext host)
         {
             var hrefs = result.Select(x => x.Href.OriginalString).Distinct().ToList();
             var items = new List<Tuple<ItemsChoiceType2, object>>();

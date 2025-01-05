@@ -17,8 +17,6 @@ using FubarDev.WebDavServer.Model;
 using FubarDev.WebDavServer.Model.Headers;
 using FubarDev.WebDavServer.Utils;
 
-using JetBrains.Annotations;
-
 using Microsoft.Extensions.Logging;
 
 namespace FubarDev.WebDavServer.Handlers.Impl
@@ -28,7 +26,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl
     /// </summary>
     public abstract class CopyMoveHandlerBase
     {
-        [NotNull]
+
         private readonly IFileSystem _rootFileSystem;
 
         /// <summary>
@@ -37,7 +35,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl
         /// <param name="rootFileSystem">The root file system</param>
         /// <param name="context">The WebDAV context</param>
         /// <param name="logger">The logger to use (either for COPY or MOVE)</param>
-        protected CopyMoveHandlerBase([NotNull] IFileSystem rootFileSystem, [NotNull] IWebDavContext context, [NotNull] ILogger logger)
+        protected CopyMoveHandlerBase(IFileSystem rootFileSystem, IWebDavContext context, ILogger logger)
         {
             _rootFileSystem = rootFileSystem;
             WebDavContext = context;
@@ -47,13 +45,13 @@ namespace FubarDev.WebDavServer.Handlers.Impl
         /// <summary>
         /// Gets the WebDAV context
         /// </summary>
-        [NotNull]
+
         protected IWebDavContext WebDavContext { get; }
 
         /// <summary>
         /// Gets the logger
         /// </summary>
-        [NotNull]
+
         protected ILogger Logger { get; }
 
         /// <summary>
@@ -68,19 +66,21 @@ namespace FubarDev.WebDavServer.Handlers.Impl
         /// <param name="cancellationToken">The cancellcation token</param>
         /// <returns>The result of the operation</returns>
         protected async Task<IWebDavResult> ExecuteAsync(
-            [NotNull] string sourcePath,
-            [NotNull] Uri destination,
+             string sourcePath,
+             Uri destination,
             DepthHeader depth,
             bool overwrite,
             RecursiveProcessingMode mode,
             bool isMove,
             CancellationToken cancellationToken)
         {
-            var sourceSelectionResult = await _rootFileSystem.SelectAsync(sourcePath, cancellationToken).ConfigureAwait(false);
+            SelectionResult sourceSelectionResult = await _rootFileSystem.SelectAsync(sourcePath, cancellationToken).ConfigureAwait(false);
             if (sourceSelectionResult.IsMissing)
             {
                 if (WebDavContext.RequestHeaders.IfNoneMatch != null)
+                {
                     throw new WebDavException(WebDavStatusCode.PreconditionFailed);
+                }
 
                 throw new WebDavException(WebDavStatusCode.NotFound);
             }
@@ -90,11 +90,11 @@ namespace FubarDev.WebDavServer.Handlers.Impl
 
             IWebDavResult result;
             IImplicitLock sourceTempLock;
-            var lockManager = _rootFileSystem.LockManager;
+            ILockManager lockManager = _rootFileSystem.LockManager;
 
             if (isMove)
             {
-                var sourceLockRequirements = new Lock(
+                Lock sourceLockRequirements = new(
                     sourceSelectionResult.TargetEntry.Path,
                     WebDavContext.PublicRelativeRequestUrl,
                     depth != DepthHeader.Zero,
@@ -111,7 +111,9 @@ namespace FubarDev.WebDavServer.Handlers.Impl
                             cancellationToken)
                         .ConfigureAwait(false);
                 if (!sourceTempLock.IsSuccessful)
+                {
                     return sourceTempLock.CreateErrorResponse();
+                }
             }
             else
             {
@@ -120,54 +122,56 @@ namespace FubarDev.WebDavServer.Handlers.Impl
 
             try
             {
-                var sourceUrl = WebDavContext.PublicAbsoluteRequestUrl;
-                var destinationUrl = new Uri(sourceUrl, destination);
+                Uri sourceUrl = WebDavContext.PublicAbsoluteRequestUrl;
+                Uri destinationUrl = new(sourceUrl, destination);
 
                 // Ignore different schemes
                 if (!WebDavContext.PublicControllerUrl.IsBaseOf(destinationUrl) || mode == RecursiveProcessingMode.PreferCrossServer)
                 {
                     if (Logger.IsEnabled(LogLevel.Trace))
+                    {
                         Logger.LogTrace("Using cross-server mode");
+                    }
 
                     if (Logger.IsEnabled(LogLevel.Debug))
+                    {
                         Logger.LogDebug($"{WebDavContext.PublicControllerUrl} is not a base of {destinationUrl}");
+                    }
 
-                    using (var remoteHandler = await CreateRemoteTargetActionsAsync(
+                    using IRemoteTargetActions remoteHandler = await CreateRemoteTargetActionsAsync(
                             destinationUrl,
                             cancellationToken)
-                        .ConfigureAwait(false))
+                        .ConfigureAwait(false);
+                    if (remoteHandler == null)
                     {
-                        if (remoteHandler == null)
-                        {
-                            throw new WebDavException(
-                                WebDavStatusCode.BadGateway,
-                                "No remote handler for given client");
-                        }
-
-                        // For error reporting
-                        sourceUrl = WebDavContext.PublicRootUrl.MakeRelativeUri(sourceUrl);
-
-                        var remoteTargetResult = await RemoteExecuteAsync(
-                            remoteHandler,
-                            sourceUrl,
-                            sourceSelectionResult,
-                            destinationUrl,
-                            depth,
-                            overwrite,
-                            cancellationToken).ConfigureAwait(false);
-                        result = remoteTargetResult.Evaluate(WebDavContext);
+                        throw new WebDavException(
+                            WebDavStatusCode.BadGateway,
+                            "No remote handler for given client");
                     }
+
+                    // For error reporting
+                    sourceUrl = WebDavContext.PublicRootUrl.MakeRelativeUri(sourceUrl);
+
+                    Engines.CollectionActionResult remoteTargetResult = await RemoteExecuteAsync(
+                        remoteHandler,
+                        sourceUrl,
+                        sourceSelectionResult,
+                        destinationUrl,
+                        depth,
+                        overwrite,
+                        cancellationToken).ConfigureAwait(false);
+                    result = remoteTargetResult.Evaluate(WebDavContext);
                 }
                 else
                 {
                     // Copy or move from one known file system to another
-                    var destinationPath = WebDavContext.PublicControllerUrl.MakeRelativeUri(destinationUrl).ToString();
+                    string destinationPath = WebDavContext.PublicControllerUrl.MakeRelativeUri(destinationUrl).ToString();
 
                     // For error reporting
                     sourceUrl = WebDavContext.PublicRootUrl.MakeRelativeUri(sourceUrl);
                     destinationUrl = WebDavContext.PublicRootUrl.MakeRelativeUri(destinationUrl);
 
-                    var destinationSelectionResult =
+                    SelectionResult destinationSelectionResult =
                         await _rootFileSystem.SelectAsync(destinationPath, cancellationToken).ConfigureAwait(false);
                     if (destinationSelectionResult.IsMissing && destinationSelectionResult.MissingNames.Count != 1)
                     {
@@ -176,7 +180,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl
                         throw new WebDavException(WebDavStatusCode.Conflict);
                     }
 
-                    var destLockRequirements = new Lock(
+                    Lock destLockRequirements = new(
                         new Uri(destinationPath, UriKind.Relative),
                         destinationUrl,
                         isMove || depth != DepthHeader.Zero,
@@ -184,7 +188,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl
                         LockAccessType.Write,
                         LockShareMode.Shared,
                         TimeoutHeader.Infinite);
-                    var destTempLock = lockManager == null
+                    IImplicitLock destTempLock = lockManager == null
                         ? new ImplicitLock(true)
                         : await lockManager.LockImplicitAsync(
                                 _rootFileSystem,
@@ -193,23 +197,25 @@ namespace FubarDev.WebDavServer.Handlers.Impl
                                 cancellationToken)
                             .ConfigureAwait(false);
                     if (!destTempLock.IsSuccessful)
+                    {
                         return destTempLock.CreateErrorResponse();
+                    }
 
                     try
                     {
-                        var isSameFileSystem = ReferenceEquals(
+                        bool isSameFileSystem = ReferenceEquals(
                             sourceSelectionResult.TargetFileSystem,
                             destinationSelectionResult.TargetFileSystem);
-                        var localMode = isSameFileSystem && mode == RecursiveProcessingMode.PreferFastest
+                        RecursiveProcessingMode localMode = isSameFileSystem && mode == RecursiveProcessingMode.PreferFastest
                             ? RecursiveProcessingMode.PreferFastest
                             : RecursiveProcessingMode.PreferCrossFileSystem;
-                        var handler = CreateLocalTargetActions(localMode);
+                        ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> handler = CreateLocalTargetActions(localMode);
 
-                        var targetInfo = FileSystemTarget.FromSelectionResult(
+                        FileSystemTarget targetInfo = FileSystemTarget.FromSelectionResult(
                             destinationSelectionResult,
                             destinationUrl,
                             handler);
-                        var targetResult = await LocalExecuteAsync(
+                        Engines.CollectionActionResult targetResult = await LocalExecuteAsync(
                             handler,
                             sourceUrl,
                             sourceSelectionResult,
@@ -232,10 +238,10 @@ namespace FubarDev.WebDavServer.Handlers.Impl
 
             if (isMove && lockManager != null)
             {
-                var locksToRemove = await lockManager
+                System.Collections.Generic.IEnumerable<IActiveLock> locksToRemove = await lockManager
                     .GetAffectedLocksAsync(sourcePath, true, false, cancellationToken)
                     .ConfigureAwait(false);
-                foreach (var activeLock in locksToRemove)
+                foreach (IActiveLock activeLock in locksToRemove)
                 {
                     await lockManager.ReleaseAsync(
                             activeLock.Path,
@@ -254,8 +260,8 @@ namespace FubarDev.WebDavServer.Handlers.Impl
         /// <param name="destinationUrl">The destination URL</param>
         /// <param name="cancellationToken">The cancellcation token</param>
         /// <returns>The implementation for remote actions</returns>
-        [NotNull]
-        [ItemCanBeNull]
+
+
         protected abstract Task<IRemoteTargetActions> CreateRemoteTargetActionsAsync(Uri destinationUrl, CancellationToken cancellationToken);
 
         /// <summary>
@@ -263,7 +269,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl
         /// </summary>
         /// <param name="mode">The requested processing mode (in-filesystem or cross-filesystem)</param>
         /// <returns>The implementation for local actions</returns>
-        [NotNull]
+
         protected abstract ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> CreateLocalTargetActions(RecursiveProcessingMode mode);
 
         /// <summary>
@@ -281,11 +287,11 @@ namespace FubarDev.WebDavServer.Handlers.Impl
         /// <param name="cancellationToken">The cancellcation token</param>
         /// <returns>The result of the operation</returns>
         private async Task<Engines.CollectionActionResult> ExecuteAsync<TCollection, TDocument, TMissing>(
-            [NotNull] RecursiveExecutionEngine<TCollection, TDocument, TMissing> engine,
-            [NotNull] Uri sourceUrl,
-            [NotNull] SelectionResult sourceSelectionResult,
-            [NotNull] TCollection parentCollection,
-            [NotNull] ITarget targetItem,
+             RecursiveExecutionEngine<TCollection, TDocument, TMissing> engine,
+             Uri sourceUrl,
+             SelectionResult sourceSelectionResult,
+             TCollection parentCollection,
+             ITarget targetItem,
             DepthHeader depth,
             CancellationToken cancellationToken)
             where TCollection : class, ICollectionTarget<TCollection, TDocument, TMissing>
@@ -295,7 +301,9 @@ namespace FubarDev.WebDavServer.Handlers.Impl
             Debug.Assert(sourceSelectionResult.Collection != null, "sourceSelectionResult.Collection != null");
 
             if (Logger.IsEnabled(LogLevel.Trace))
+            {
                 Logger.LogTrace($"Copy or move from {sourceUrl} to {targetItem.DestinationUrl}");
+            }
 
             if (sourceSelectionResult.ResultType == SelectionResultType.FoundDocument)
             {
@@ -307,7 +315,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl
                 }
                 else if (targetItem is TMissing)
                 {
-                    var target = (TMissing)targetItem;
+                    TMissing target = (TMissing)targetItem;
                     docResult = await engine.ExecuteAsync(
                         sourceUrl,
                         sourceSelectionResult.Document,
@@ -316,7 +324,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl
                 }
                 else
                 {
-                    var target = (TDocument)targetItem;
+                    TDocument target = (TDocument)targetItem;
                     docResult = await engine.ExecuteAsync(
                         sourceUrl,
                         sourceSelectionResult.Document,
@@ -324,7 +332,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl
                         cancellationToken).ConfigureAwait(false);
                 }
 
-                var engineResult = new Engines.CollectionActionResult(ActionStatus.Ignored, parentCollection)
+                Engines.CollectionActionResult engineResult = new(ActionStatus.Ignored, parentCollection)
                 {
                     DocumentActionResults = new[] { docResult },
                 };
@@ -340,7 +348,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl
             }
             else if (targetItem is TMissing)
             {
-                var target = (TMissing)targetItem;
+                TMissing target = (TMissing)targetItem;
                 collResult = await engine.ExecuteAsync(
                     sourceUrl,
                     sourceSelectionResult.Collection,
@@ -350,7 +358,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl
             }
             else
             {
-                var target = (TCollection)targetItem;
+                TCollection target = (TCollection)targetItem;
                 collResult = await engine.ExecuteAsync(
                     sourceUrl,
                     sourceSelectionResult.Collection,
@@ -363,27 +371,27 @@ namespace FubarDev.WebDavServer.Handlers.Impl
         }
 
         private async Task<Engines.CollectionActionResult> RemoteExecuteAsync(
-            [NotNull] IRemoteTargetActions handler,
-            [NotNull] Uri sourceUrl,
-            [NotNull] SelectionResult sourceSelectionResult,
-            [NotNull] Uri targetUrl,
+             IRemoteTargetActions handler,
+             Uri sourceUrl,
+             SelectionResult sourceSelectionResult,
+             Uri targetUrl,
             DepthHeader depth,
             bool overwrite,
             CancellationToken cancellationToken)
         {
             Debug.Assert(sourceSelectionResult.Collection != null, "sourceSelectionResult.Collection != null");
 
-            var parentCollectionUrl = targetUrl.GetParent();
+            Uri parentCollectionUrl = targetUrl.GetParent();
 
-            var engine = new RecursiveExecutionEngine<RemoteCollectionTarget, RemoteDocumentTarget, RemoteMissingTarget>(
+            RecursiveExecutionEngine<RemoteCollectionTarget, RemoteDocumentTarget, RemoteMissingTarget> engine = new(
                 handler,
                 overwrite,
                 Logger);
 
-            var targetName = targetUrl.GetName();
-            var parentName = parentCollectionUrl.GetName();
-            var parentCollection = new RemoteCollectionTarget(null, parentName, parentCollectionUrl, false, handler);
-            var targetItem = await handler.GetAsync(parentCollection, targetName, cancellationToken).ConfigureAwait(false);
+            string targetName = targetUrl.GetName();
+            string parentName = parentCollectionUrl.GetName();
+            RemoteCollectionTarget parentCollection = new(null, parentName, parentCollectionUrl, false, handler);
+            ITarget targetItem = await handler.GetAsync(parentCollection, targetName, cancellationToken).ConfigureAwait(false);
 
             return await ExecuteAsync(
                     engine,
@@ -397,17 +405,17 @@ namespace FubarDev.WebDavServer.Handlers.Impl
         }
 
         private async Task<Engines.CollectionActionResult> LocalExecuteAsync(
-            [NotNull] ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> handler,
-            [NotNull] Uri sourceUrl,
-            [NotNull] SelectionResult sourceSelectionResult,
-            [NotNull] FileSystemTarget targetInfo,
+             ITargetActions<CollectionTarget, DocumentTarget, MissingTarget> handler,
+             Uri sourceUrl,
+             SelectionResult sourceSelectionResult,
+             FileSystemTarget targetInfo,
             DepthHeader depth,
             bool overwrite,
             CancellationToken cancellationToken)
         {
             Debug.Assert(sourceSelectionResult.Collection != null, "sourceSelectionResult.Collection != null");
 
-            var engine = new RecursiveExecutionEngine<CollectionTarget, DocumentTarget, MissingTarget>(
+            RecursiveExecutionEngine<CollectionTarget, DocumentTarget, MissingTarget> engine = new(
                 handler,
                 overwrite,
                 Logger);
@@ -416,28 +424,27 @@ namespace FubarDev.WebDavServer.Handlers.Impl
             ITarget targetItem;
             if (targetInfo.Collection != null)
             {
-                var collTarget = targetInfo.NewCollectionTarget();
+                CollectionTarget collTarget = targetInfo.NewCollectionTarget();
                 parentCollection = collTarget.Parent;
                 targetItem = collTarget;
             }
             else if (targetInfo.Document != null)
             {
-                var docTarget = targetInfo.NewDocumentTarget();
+                DocumentTarget docTarget = targetInfo.NewDocumentTarget();
                 parentCollection = docTarget.Parent;
                 targetItem = docTarget;
             }
             else
             {
-                var missingTarget = targetInfo.NewMissingTarget();
+                MissingTarget missingTarget = targetInfo.NewMissingTarget();
                 parentCollection = missingTarget.Parent;
                 targetItem = missingTarget;
             }
 
             Debug.Assert(parentCollection != null, "Cannt copy or move the root collection.");
-            if (parentCollection == null)
-                throw new InvalidOperationException("Cannt copy or move the root collection.");
-
-            return await ExecuteAsync(
+            return parentCollection == null
+                ? throw new InvalidOperationException("Cannt copy or move the root collection.")
+                : await ExecuteAsync(
                     engine,
                     sourceUrl,
                     sourceSelectionResult,

@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Engines.Remote
 {
@@ -98,8 +98,8 @@ namespace FubarDev.WebDavServer.Engines.Remote
         /// <summary>
         /// Gets the <c>href</c>s of the failed operation
         /// </summary>
-        [NotNull]
-        [ItemNotNull]
+        
+        
         public IReadOnlyCollection<Uri> Href { get; }
     }
 }

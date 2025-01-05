@@ -9,7 +9,7 @@ using System.Linq;
 
 using FubarDev.WebDavServer.Utils;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Model.Headers
 {
@@ -18,10 +18,10 @@ namespace FubarDev.WebDavServer.Model.Headers
     /// </summary>
     public class IfHeaderCondition
     {
-        [NotNull]
+        
         private readonly EntityTagComparer _etagComparer;
 
-        private IfHeaderCondition(bool not, [CanBeNull] Uri stateToken, EntityTag? etag, [NotNull] EntityTagComparer etagComparer)
+        private IfHeaderCondition(bool not,  Uri stateToken, EntityTag? etag,  EntityTagComparer etagComparer)
         {
             _etagComparer = etagComparer;
             Not = not;
@@ -37,7 +37,7 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// <summary>
         /// Gets the state token to validate with
         /// </summary>
-        [CanBeNull]
+        
         public Uri StateToken { get; }
 
         /// <summary>
@@ -70,9 +70,9 @@ namespace FubarDev.WebDavServer.Model.Headers
             return Not ? !result : result;
         }
 
-        [NotNull]
-        [ItemNotNull]
-        internal static IEnumerable<IfHeaderCondition> Parse([NotNull] StringSource source, [NotNull] EntityTagComparer entityTagComparer)
+        
+        
+        internal static IEnumerable<IfHeaderCondition> Parse( StringSource source,  EntityTagComparer entityTagComparer)
         {
             while (!source.SkipWhiteSpace())
             {

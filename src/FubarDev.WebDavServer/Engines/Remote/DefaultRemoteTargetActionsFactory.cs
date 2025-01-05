@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Engines.Remote
 {
@@ -18,10 +18,10 @@ namespace FubarDev.WebDavServer.Engines.Remote
     /// </summary>
     public class DefaultRemoteTargetActionsFactory : IRemoteCopyTargetActionsFactory, IRemoteMoveTargetActionsFactory
     {
-        [NotNull]
+        
         private readonly IWebDavContext _context;
 
-        [NotNull]
+        
         private readonly IHttpMessageHandlerFactory _httpMessageHandlerFactory;
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace FubarDev.WebDavServer.Engines.Remote
         /// </summary>
         /// <param name="context">The WebDAV request context</param>
         /// <param name="httpMessageHandlerFactory">The factory for <see cref="HttpClient"/> instances</param>
-        public DefaultRemoteTargetActionsFactory([NotNull] IWebDavContext context, [NotNull] IHttpMessageHandlerFactory httpMessageHandlerFactory)
+        public DefaultRemoteTargetActionsFactory( IWebDavContext context,  IHttpMessageHandlerFactory httpMessageHandlerFactory)
         {
             _context = context;
             _httpMessageHandlerFactory = httpMessageHandlerFactory;

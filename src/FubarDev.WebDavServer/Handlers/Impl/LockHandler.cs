@@ -16,7 +16,7 @@ using FubarDev.WebDavServer.Model;
 using FubarDev.WebDavServer.Model.Headers;
 using FubarDev.WebDavServer.Utils;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Handlers.Impl
 {
@@ -25,16 +25,16 @@ namespace FubarDev.WebDavServer.Handlers.Impl
     /// </summary>
     public class LockHandler : ILockHandler
     {
-        [NotNull]
+        
         private readonly IFileSystem _rootFileSystem;
 
-        [CanBeNull]
+        
         private readonly ILockManager _lockManager;
 
-        [CanBeNull]
+        
         private readonly ITimeoutPolicy _timeoutPolicy;
 
-        [NotNull]
+        
         private readonly IWebDavContext _context;
 
         private readonly bool _useAbsoluteHref = false;
@@ -46,7 +46,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl
         /// <param name="rootFileSystem">The root file system</param>
         /// <param name="lockManager">The lock manager</param>
         /// <param name="timeoutPolicy">The timeout policy for the selection of the <see cref="TimeoutHeader"/> value</param>
-        public LockHandler([NotNull] IWebDavContext context, [NotNull] IFileSystem rootFileSystem, ILockManager lockManager = null, ITimeoutPolicy timeoutPolicy = null)
+        public LockHandler( IWebDavContext context,  IFileSystem rootFileSystem, ILockManager lockManager = null, ITimeoutPolicy timeoutPolicy = null)
         {
             _context = context;
             _rootFileSystem = rootFileSystem;

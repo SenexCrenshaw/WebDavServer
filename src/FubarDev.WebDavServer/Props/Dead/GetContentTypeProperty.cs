@@ -11,7 +11,7 @@ using FubarDev.WebDavServer.Model;
 using FubarDev.WebDavServer.Props.Generic;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props.Dead
 {
@@ -25,13 +25,13 @@ namespace FubarDev.WebDavServer.Props.Dead
         /// </summary>
         public static readonly XName PropertyName = WebDavXml.Dav + "getcontenttype";
 
-        [CanBeNull]
+        
         private readonly IMimeTypeDetector _mimeTypeDetector;
 
-        [NotNull]
+        
         private readonly IEntry _entry;
 
-        [NotNull]
+        
         private readonly IPropertyStore _store;
 
         private string _value;
@@ -43,7 +43,7 @@ namespace FubarDev.WebDavServer.Props.Dead
         /// <param name="store">The property store to store this property</param>
         /// <param name="mimeTypeDetector">The mime type detector</param>
         /// <param name="cost">The cost of querying the display names property</param>
-        public GetContentTypeProperty([NotNull] IEntry entry, [NotNull] IPropertyStore store, [CanBeNull] IMimeTypeDetector mimeTypeDetector = null, int? cost = null)
+        public GetContentTypeProperty( IEntry entry,  IPropertyStore store,  IMimeTypeDetector mimeTypeDetector = null, int? cost = null)
             : base(PropertyName, null, cost ?? store.Cost, null, null, WebDavXml.Dav + "contenttype")
         {
             _mimeTypeDetector = mimeTypeDetector;

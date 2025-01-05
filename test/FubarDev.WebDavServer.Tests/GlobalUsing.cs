@@ -1,0 +1,1 @@
+﻿global using Lock = FubarDev.WebDavServer.Locking.Lock;

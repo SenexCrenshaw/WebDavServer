@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Model
 {
@@ -18,9 +18,9 @@ namespace FubarDev.WebDavServer.Model
         /// </summary>
         /// <param name="response">The response to get the <c>href</c> values from</param>
         /// <returns>The list of found <c>href</c> values</returns>
-        [NotNull]
-        [ItemNotNull]
-        public static IEnumerable<string> GetHrefs([NotNull] this response response)
+        
+        
+        public static IEnumerable<string> GetHrefs( this response response)
         {
             if (!string.IsNullOrEmpty(response.href))
                 yield return response.href;

@@ -21,7 +21,7 @@ using FubarDev.WebDavServer.Props.Dead;
 using FubarDev.WebDavServer.Props.Live;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Extensions.Options;
 
@@ -32,43 +32,43 @@ namespace FubarDev.WebDavServer.Dispatchers
     /// </summary>
     public class WebDavDispatcherClass1 : IWebDavClass1
     {
-        [NotNull]
+        
         private readonly Lazy<IReadOnlyDictionary<XName, CreateDeadPropertyDelegate>> _defaultCreationMap;
 
-        [NotNull]
+        
         private readonly IDeadPropertyFactory _deadPropertyFactory;
 
-        [NotNull]
+        
         private readonly IMimeTypeDetector _mimeTypeDetector;
 
-        [CanBeNull]
+        
         private readonly IPropFindHandler _propFindHandler;
 
-        [CanBeNull]
+        
         private readonly IPropPatchHandler _propPatchHandler;
 
-        [CanBeNull]
+        
         private readonly IMkColHandler _mkColHandler;
 
-        [CanBeNull]
+        
         private readonly IGetHandler _getHandler;
 
-        [CanBeNull]
+        
         private readonly IHeadHandler _headHandler;
 
-        [CanBeNull]
+        
         private readonly IPutHandler _putHandler;
 
-        [CanBeNull]
+        
         private readonly IDeleteHandler _deleteHandler;
 
-        [CanBeNull]
+        
         private readonly IOptionsHandler _optionsHandler;
 
-        [CanBeNull]
+        
         private readonly ICopyHandler _copyHandler;
 
-        [CanBeNull]
+        
         private readonly IMoveHandler _moveHandler;
 
         /// <summary>
@@ -80,11 +80,11 @@ namespace FubarDev.WebDavServer.Dispatchers
         /// <param name="mimeTypeDetector">The mime type detector for the getmimetype property</param>
         /// <param name="options">The options for the WebDAV class 1 implementation</param>
         public WebDavDispatcherClass1(
-            [NotNull] [ItemNotNull] IEnumerable<IClass1Handler> class1Handlers,
-            [NotNull] IWebDavContext context,
-            [NotNull] IDeadPropertyFactory deadPropertyFactory,
-            [NotNull] IMimeTypeDetector mimeTypeDetector,
-            [CanBeNull] IOptions<WebDavDispatcherClass1Options> options)
+              IEnumerable<IClass1Handler> class1Handlers,
+             IWebDavContext context,
+             IDeadPropertyFactory deadPropertyFactory,
+             IMimeTypeDetector mimeTypeDetector,
+             IOptions<WebDavDispatcherClass1Options> options)
         {
             _deadPropertyFactory = deadPropertyFactory;
             _mimeTypeDetector = mimeTypeDetector;
@@ -181,7 +181,7 @@ namespace FubarDev.WebDavServer.Dispatchers
             _defaultCreationMap = new Lazy<IReadOnlyDictionary<XName, CreateDeadPropertyDelegate>>(() => CreateDeadPropertiesMap(options?.Value ?? new WebDavDispatcherClass1Options()));
         }
 
-        private delegate IDeadProperty CreateDeadPropertyDelegate([NotNull] IPropertyStore store, [NotNull] IEntry entry, [NotNull] XName name);
+        private delegate IDeadProperty CreateDeadPropertyDelegate( IPropertyStore store,  IEntry entry,  XName name);
 
         /// <inheritdoc />
         public IEnumerable<string> HttpMethods { get; }
@@ -325,8 +325,8 @@ namespace FubarDev.WebDavServer.Dispatchers
             return true;
         }
 
-        [NotNull]
-        private IReadOnlyDictionary<XName, CreateDeadPropertyDelegate> CreateDeadPropertiesMap([NotNull] WebDavDispatcherClass1Options options)
+        
+        private IReadOnlyDictionary<XName, CreateDeadPropertyDelegate> CreateDeadPropertiesMap( WebDavDispatcherClass1Options options)
         {
             var result = new Dictionary<XName, CreateDeadPropertyDelegate>()
             {

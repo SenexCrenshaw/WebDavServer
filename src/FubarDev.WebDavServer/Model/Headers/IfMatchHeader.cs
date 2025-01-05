@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Model.Headers
 {
@@ -13,7 +13,7 @@ namespace FubarDev.WebDavServer.Model.Headers
     /// </summary>
     public class IfMatchHeader
     {
-        [CanBeNull]
+        
         private readonly ISet<EntityTag> _etags;
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// </summary>
         /// <param name="etags">The entity tags to match</param>
         /// <param name="etagComparer">The entity comparer to use</param>
-        public IfMatchHeader([NotNull] IEnumerable<EntityTag> etags, EntityTagComparer etagComparer)
+        public IfMatchHeader( IEnumerable<EntityTag> etags, EntityTagComparer etagComparer)
         {
             _etags = new HashSet<EntityTag>(etags, etagComparer);
         }
@@ -39,8 +39,8 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// </summary>
         /// <param name="s">The header string to parse</param>
         /// <returns>The new instance of the <see cref="IfMatchHeader"/> class</returns>
-        [NotNull]
-        public static IfMatchHeader Parse([CanBeNull] string s)
+        
+        public static IfMatchHeader Parse( string s)
         {
             return Parse(s, EntityTagComparer.Strong);
         }
@@ -51,8 +51,8 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// <param name="s">The header string to parse</param>
         /// <param name="etagComparer">The entity tag comparer used for the <see cref="IsMatch"/> function</param>
         /// <returns>The new instance of the <see cref="IfMatchHeader"/> class</returns>
-        [NotNull]
-        public static IfMatchHeader Parse([CanBeNull] string s, EntityTagComparer etagComparer)
+        
+        public static IfMatchHeader Parse( string s, EntityTagComparer etagComparer)
         {
             if (string.IsNullOrWhiteSpace(s) || s == "*")
                 return new IfMatchHeader();
@@ -65,8 +65,8 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// </summary>
         /// <param name="s">The header values to parse</param>
         /// <returns>The new instance of the <see cref="IfMatchHeader"/> class</returns>
-        [NotNull]
-        public static IfMatchHeader Parse([NotNull] [ItemNotNull] IEnumerable<string> s)
+        
+        public static IfMatchHeader Parse(  IEnumerable<string> s)
         {
             return Parse(s, EntityTagComparer.Strong);
         }
@@ -77,8 +77,8 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// <param name="s">The header values to parse</param>
         /// <param name="etagComparer">The entity tag comparer used for the <see cref="IsMatch"/> function</param>
         /// <returns>The new instance of the <see cref="IfMatchHeader"/> class</returns>
-        [NotNull]
-        public static IfMatchHeader Parse([NotNull][ItemNotNull] IEnumerable<string> s, EntityTagComparer etagComparer)
+        
+        public static IfMatchHeader Parse( IEnumerable<string> s, EntityTagComparer etagComparer)
         {
             var result = new List<EntityTag>();
             foreach (var etag in s)

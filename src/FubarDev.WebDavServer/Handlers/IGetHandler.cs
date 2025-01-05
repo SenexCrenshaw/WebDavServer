@@ -5,7 +5,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Handlers
 {
@@ -20,8 +20,8 @@ namespace FubarDev.WebDavServer.Handlers
         /// <param name="path">The path to the element to get</param>
         /// <param name="cancellationToken">The cancellcation token</param>
         /// <returns>The result of the operation</returns>
-        [NotNull]
-        [ItemNotNull]
-        Task<IWebDavResult> GetAsync([NotNull] string path, CancellationToken cancellationToken);
+        
+        
+        Task<IWebDavResult> GetAsync( string path, CancellationToken cancellationToken);
     }
 }

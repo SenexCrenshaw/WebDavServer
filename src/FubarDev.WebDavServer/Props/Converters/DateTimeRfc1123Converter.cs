@@ -6,7 +6,7 @@ using System;
 using System.Globalization;
 using System.Xml.Linq;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props.Converters
 {
@@ -20,7 +20,7 @@ namespace FubarDev.WebDavServer.Props.Converters
         /// </summary>
         /// <param name="s">The string to parse</param>
         /// <returns>The parsed date</returns>
-        public static DateTime Parse([NotNull] string s)
+        public static DateTime Parse( string s)
         {
             if (s.EndsWith("UTC"))
                 s = s.Substring(0, s.Length - 3) + "GMT";

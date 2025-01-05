@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +30,7 @@ namespace FubarDev.WebDavServer.AspNetCore
 
         private readonly IWebDavResult _result;
 
-        [CanBeNull]
+        
         private readonly ILogger<WebDavIndirectResult> _logger;
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace FubarDev.WebDavServer.AspNetCore
         /// <param name="dispatcher">The WebDAV HTTP method dispatcher</param>
         /// <param name="result">The result of the WebDAV operation</param>
         /// <param name="logger">The logger for a <see cref="WebDavIndirectResult"/></param>
-        public WebDavIndirectResult(IWebDavDispatcher dispatcher, IWebDavResult result, [CanBeNull] ILogger<WebDavIndirectResult> logger)
+        public WebDavIndirectResult(IWebDavDispatcher dispatcher, IWebDavResult result,  ILogger<WebDavIndirectResult> logger)
             : base((int)result.StatusCode)
         {
             _dispatcher = dispatcher;

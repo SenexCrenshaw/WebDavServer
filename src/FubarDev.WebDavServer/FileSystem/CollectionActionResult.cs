@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.FileSystem
 {
@@ -20,7 +20,7 @@ namespace FubarDev.WebDavServer.FileSystem
         /// </summary>
         /// <param name="target">The target to create the result information for</param>
         /// <param name="createdChildEntries">The created child entries</param>
-        public CollectionActionResult([NotNull] ICollection target, [NotNull] [ItemNotNull] IReadOnlyCollection<IEntry> createdChildEntries)
+        public CollectionActionResult( ICollection target,   IReadOnlyCollection<IEntry> createdChildEntries)
             : this(target, createdChildEntries, null, WebDavStatusCode.OK)
         {
             Target = target;
@@ -34,9 +34,9 @@ namespace FubarDev.WebDavServer.FileSystem
         /// <param name="failedEntry">The failed child entry</param>
         /// <param name="errorStatusCode">The status code for the failed child entry</param>
         public CollectionActionResult(
-            [NotNull] ICollection target,
-            [NotNull] [ItemNotNull] IReadOnlyCollection<IEntry> createdChildEntries,
-            [CanBeNull] IEntry failedEntry,
+             ICollection target,
+              IReadOnlyCollection<IEntry> createdChildEntries,
+             IEntry failedEntry,
             WebDavStatusCode errorStatusCode)
         {
             Target = target;
@@ -48,20 +48,20 @@ namespace FubarDev.WebDavServer.FileSystem
         /// <summary>
         /// Gets the target this result information object is for
         /// </summary>
-        [NotNull]
+        
         public ICollection Target { get; }
 
         /// <summary>
         /// Gets the created child entries
         /// </summary>
-        [NotNull]
-        [ItemNotNull]
+        
+        
         public IReadOnlyCollection<IEntry> CreatedChildEntries { get; }
 
         /// <summary>
         /// Gets the failed entry
         /// </summary>
-        [CanBeNull]
+        
         public IEntry FailedEntry { get; }
 
         /// <summary>

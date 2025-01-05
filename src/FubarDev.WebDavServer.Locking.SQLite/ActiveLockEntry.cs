@@ -15,26 +15,26 @@ namespace FubarDev.WebDavServer.Locking.SQLite
         [PrimaryKey]
         [Column("id")]
         [MaxLength(100)]
-        [NotNull]
+        
         public string StateToken { get; set; } = string.Empty;
 
         [Column("path")]
-        [NotNull]
+        
         public string Path { get; set; } = string.Empty;
 
         [Column("href")]
-        [NotNull]
+        
         public string Href { get; set; } = string.Empty;
 
         [Column("recursive")]
         public bool Recursive { get; set; }
 
         [Column("access_type")]
-        [NotNull]
+        
         public string AccessType { get; set; } = string.Empty;
 
         [Column("share_mode")]
-        [NotNull]
+        
         public string ShareMode { get; set; } = string.Empty;
 
         [Column("timeout")]

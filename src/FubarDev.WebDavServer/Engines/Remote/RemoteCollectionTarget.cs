@@ -11,7 +11,7 @@ using System.Xml.Linq;
 
 using FubarDev.WebDavServer.Props;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Engines.Remote
 {
@@ -20,10 +20,10 @@ namespace FubarDev.WebDavServer.Engines.Remote
     /// </summary>
     public class RemoteCollectionTarget : ICollectionTarget<RemoteCollectionTarget, RemoteDocumentTarget, RemoteMissingTarget>
     {
-        [CanBeNull]
+        
         private readonly RemoteCollectionTarget _parent;
 
-        [NotNull]
+        
         private readonly IRemoteTargetActions _targetActions;
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace FubarDev.WebDavServer.Engines.Remote
         /// <param name="destinationUrl">The destination URL</param>
         /// <param name="created">Was the collection created by the <see cref="RecursiveExecutionEngine{TCollection,TDocument,TMissing}"/></param>
         /// <param name="targetActions">The target actions implementation to use</param>
-        public RemoteCollectionTarget([CanBeNull] RemoteCollectionTarget parent, [NotNull] string name, [NotNull] Uri destinationUrl, bool created, [NotNull] IRemoteTargetActions targetActions)
+        public RemoteCollectionTarget( RemoteCollectionTarget parent,  string name,  Uri destinationUrl, bool created,  IRemoteTargetActions targetActions)
         {
             _parent = parent;
             _targetActions = targetActions;

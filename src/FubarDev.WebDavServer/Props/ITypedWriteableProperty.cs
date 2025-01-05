@@ -5,7 +5,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props
 {
@@ -21,7 +21,7 @@ namespace FubarDev.WebDavServer.Props
         /// <param name="value">The value to set</param>
         /// <param name="ct">The cancellation token</param>
         /// <returns>the async task</returns>
-        [NotNull]
-        Task SetValueAsync([NotNull] T value, CancellationToken ct);
+        
+        Task SetValueAsync( T value, CancellationToken ct);
     }
 }

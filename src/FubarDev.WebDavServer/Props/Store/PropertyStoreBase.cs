@@ -12,7 +12,7 @@ using FubarDev.WebDavServer.FileSystem;
 using FubarDev.WebDavServer.Model.Headers;
 using FubarDev.WebDavServer.Props.Dead;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props.Store
 {
@@ -25,7 +25,7 @@ namespace FubarDev.WebDavServer.Props.Store
         /// Initializes a new instance of the <see cref="PropertyStoreBase"/> class.
         /// </summary>
         /// <param name="deadPropertyFactory">The factory to create dead properties</param>
-        protected PropertyStoreBase([NotNull] IDeadPropertyFactory deadPropertyFactory)
+        protected PropertyStoreBase( IDeadPropertyFactory deadPropertyFactory)
         {
             DeadPropertyFactory = deadPropertyFactory;
         }
@@ -36,7 +36,7 @@ namespace FubarDev.WebDavServer.Props.Store
         /// <summary>
         /// Gets the dead property factory
         /// </summary>
-        [NotNull]
+        
         protected IDeadPropertyFactory DeadPropertyFactory { get; }
 
         /// <inheritdoc />

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Handlers
 {
@@ -23,8 +23,8 @@ namespace FubarDev.WebDavServer.Handlers
         /// <param name="request">Some information about the properties to query</param>
         /// <param name="cancellationToken">The cancellcation token</param>
         /// <returns>The result of the operation</returns>
-        [NotNull]
-        [ItemNotNull]
-        Task<IWebDavResult> PropFindAsync([NotNull] string path, [CanBeNull] propfind request, CancellationToken cancellationToken);
+        
+        
+        Task<IWebDavResult> PropFindAsync( string path,  propfind request, CancellationToken cancellationToken);
     }
 }

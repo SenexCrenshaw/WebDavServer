@@ -11,7 +11,7 @@ using FubarDev.WebDavServer.FileSystem.Mount;
 using FubarDev.WebDavServer.Locking;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.FileSystem.InMemory
 {
@@ -33,9 +33,9 @@ namespace FubarDev.WebDavServer.FileSystem.InMemory
         /// <param name="lockManager">The global lock manager</param>
         /// <param name="propertyStoreFactory">The store for dead properties</param>
         public InMemoryFileSystem(
-            [CanBeNull] ICollection mountPoint,
-            [NotNull] IPathTraversalEngine pathTraversalEngine,
-            [NotNull] ISystemClock systemClock,
+             ICollection mountPoint,
+             IPathTraversalEngine pathTraversalEngine,
+             ISystemClock systemClock,
             ILockManager lockManager = null,
             IPropertyStoreFactory propertyStoreFactory = null)
         {
@@ -51,7 +51,7 @@ namespace FubarDev.WebDavServer.FileSystem.InMemory
         /// <summary>
         /// Gets the root collection
         /// </summary>
-        [NotNull]
+        
         public InMemoryDirectory RootCollection { get; }
 
         /// <summary>

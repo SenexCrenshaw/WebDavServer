@@ -9,7 +9,7 @@ using System.Threading;
 
 using FubarDev.WebDavServer.Model.Headers;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Extensions.Logging;
 
@@ -22,22 +22,22 @@ namespace FubarDev.WebDavServer.Locking
     {
         private static readonly TimeSpan _deactivated = TimeSpan.FromMilliseconds(-1);
 
-        [NotNull]
+        
         private readonly ISystemClock _systemClock;
 
-        [NotNull]
+        
         private readonly MultiValueDictionary<DateTime, ActiveLockItem> _activeLocks = new MultiValueDictionary<DateTime, ActiveLockItem>();
 
-        [NotNull]
+        
         private readonly object _syncRoot = new object();
 
-        [NotNull]
+        
         private readonly Timer _timer;
 
-        [NotNull]
+        
         private readonly ILogger<LockCleanupTask> _logger;
 
-        [CanBeNull]
+        
         private ActiveLockItem _mostRecentExpirationLockItem;
 
         /// <summary>
@@ -46,8 +46,8 @@ namespace FubarDev.WebDavServer.Locking
         /// <param name="systemClock">The system clock</param>
         /// <param name="logger">The logger for the cleanup task</param>
         public LockCleanupTask(
-            [NotNull] ISystemClock systemClock,
-            [NotNull] ILogger<LockCleanupTask> logger)
+             ISystemClock systemClock,
+             ILogger<LockCleanupTask> logger)
         {
             _systemClock = systemClock;
             _logger = logger;
@@ -222,7 +222,7 @@ namespace FubarDev.WebDavServer.Locking
             return null;
         }
 
-        private void ConfigureTimer([NotNull] ActiveLockItem lockItem)
+        private void ConfigureTimer( ActiveLockItem lockItem)
         {
             if (_logger.IsEnabled(LogLevel.Trace))
                 _logger.LogTrace($"Lock {lockItem.ActiveLock.StateToken} is the next to expire.");
@@ -242,7 +242,7 @@ namespace FubarDev.WebDavServer.Locking
 
         private class ActiveLockItem
         {
-            public ActiveLockItem([NotNull] ILockManager lockManager, [NotNull] IActiveLock activeLock)
+            public ActiveLockItem( ILockManager lockManager,  IActiveLock activeLock)
             {
                 LockManager = lockManager;
                 ActiveLock = activeLock;
@@ -250,10 +250,10 @@ namespace FubarDev.WebDavServer.Locking
 
             public DateTime Expiration => ActiveLock.Expiration;
 
-            [NotNull]
+            
             public ILockManager LockManager { get; }
 
-            [NotNull]
+            
             public IActiveLock ActiveLock { get; }
         }
     }

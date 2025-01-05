@@ -6,7 +6,7 @@ using System;
 
 using FubarDev.WebDavServer.Utils;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Model.Headers
 {
@@ -20,7 +20,7 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// </summary>
         /// <param name="source">The <see langword="string"/> to parse the <c>Coded-URL</c> from</param>
         /// <returns>The parsed <c>Coded-URL</c></returns>
-        public static Uri Parse([NotNull] string source)
+        public static Uri Parse( string source)
         {
             var src = new StringSource(source);
             Uri stateToken;
@@ -37,7 +37,7 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// <param name="source">The <see langword="string"/> to parse the <c>Coded-URL</c> from</param>
         /// <param name="codedUrl">The parsed <c>Coded-URL</c></param>
         /// <returns><see langword="true"/> when the <c>Coded-URL</c> could be parsed successfully</returns>
-        public static bool TryParse([NotNull] string source, out Uri codedUrl)
+        public static bool TryParse( string source, out Uri codedUrl)
         {
             var src = new StringSource(source);
             if (!TryParse(src, out codedUrl))
@@ -51,7 +51,7 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// <param name="source">The <see cref="StringSource"/> to parse the <c>Coded-URL</c> from</param>
         /// <param name="codedUrl">The parsed <c>Coded-URL</c></param>
         /// <returns><see langword="true"/> when the <c>Coded-URL</c> could be parsed successfully</returns>
-        internal static bool TryParse([NotNull] StringSource source, out Uri codedUrl)
+        internal static bool TryParse( StringSource source, out Uri codedUrl)
         {
             if (!source.AdvanceIf("<"))
             {

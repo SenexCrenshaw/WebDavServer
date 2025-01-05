@@ -5,7 +5,7 @@
 using System;
 using System.Security.Principal;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.FileSystem
 {
@@ -20,7 +20,7 @@ namespace FubarDev.WebDavServer.FileSystem
         /// <param name="mountPoint">The mount point where this file system should be included</param>
         /// <param name="principal">The current principal to get the <see cref="IFileSystem"/> instance for</param>
         /// <returns>The <see cref="IFileSystem"/> instance for the <paramref name="principal"/></returns>
-        [NotNull]
-        IFileSystem CreateFileSystem([CanBeNull] ICollection mountPoint, [NotNull] IPrincipal principal);
+        
+        IFileSystem CreateFileSystem( ICollection mountPoint,  IPrincipal principal);
     }
 }

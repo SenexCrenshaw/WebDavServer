@@ -7,7 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.FileSystem.DotNet
 {
@@ -24,7 +24,7 @@ namespace FubarDev.WebDavServer.FileSystem.DotNet
         /// <param name="info">The file system information</param>
         /// <param name="path">The root-relative path of this entry</param>
         /// <param name="name">The entry name (<see langword="null"/> when <see cref="FileSystemInfo.Name"/> of <see cref="Info"/> should be used)</param>
-        protected DotNetEntry(DotNetFileSystem fileSystem, ICollection parent, FileSystemInfo info, Uri path, [CanBeNull] string name)
+        protected DotNetEntry(DotNetFileSystem fileSystem, ICollection parent, FileSystemInfo info, Uri path,  string name)
         {
             Parent = parent;
             Info = info;

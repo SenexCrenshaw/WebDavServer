@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 using FubarDev.WebDavServer.Props;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Engines
 {
@@ -24,7 +24,7 @@ namespace FubarDev.WebDavServer.Engines
         /// <param name="properties">The source properties</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The list of property names that couldn't be set</returns>
-        [NotNull]
+        
         Task<IReadOnlyCollection<XName>> SetPropertiesAsync(IEnumerable<IUntypedWriteableProperty> properties, CancellationToken cancellationToken);
     }
 }

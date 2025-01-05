@@ -9,7 +9,7 @@ using FubarDev.WebDavServer.FileSystem;
 using FubarDev.WebDavServer.Props.Dead;
 using FubarDev.WebDavServer.Utils;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -23,16 +23,16 @@ namespace FubarDev.WebDavServer.Props.Store.SQLite
     /// </summary>
     public class SQLitePropertyStoreFactory : IPropertyStoreFactory
     {
-        [NotNull]
+        
         private readonly IWebDavContext _webDavContext;
 
-        [NotNull]
+        
         private readonly ILogger<SQLitePropertyStore> _logger;
 
-        [NotNull]
+        
         private readonly IDeadPropertyFactory _deadPropertyFactory;
 
-        [CanBeNull]
+        
         private readonly IOptions<SQLitePropertyStoreOptions> _options;
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace FubarDev.WebDavServer.Props.Store.SQLite
         /// <param name="logger">The logger for the property store factory</param>
         /// <param name="deadPropertyFactory">The factory for dead properties</param>
         /// <param name="options">The options for this property store</param>
-        public SQLitePropertyStoreFactory([NotNull] IWebDavContext webDavContext, [NotNull] ILogger<SQLitePropertyStore> logger, [NotNull] IDeadPropertyFactory deadPropertyFactory, [CanBeNull] IOptions<SQLitePropertyStoreOptions> options = null)
+        public SQLitePropertyStoreFactory( IWebDavContext webDavContext,  ILogger<SQLitePropertyStore> logger,  IDeadPropertyFactory deadPropertyFactory,  IOptions<SQLitePropertyStoreOptions> options = null)
         {
             _webDavContext = webDavContext;
             _logger = logger;

@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.AspNetCore.Mvc.Routing;
 
@@ -30,7 +30,7 @@ namespace FubarDev.WebDavServer.AspNetCore.Routing
         /// Initializes a new instance of the <see cref="HttpLockAttribute"/> class.
         /// </summary>
         /// <param name="template">The route template. May not be null.</param>
-        public HttpLockAttribute([NotNull] string template)
+        public HttpLockAttribute( string template)
             : base(_supportedMethods, template)
         {
             if (template == null)

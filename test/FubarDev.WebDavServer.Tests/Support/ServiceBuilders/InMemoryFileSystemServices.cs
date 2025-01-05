@@ -21,7 +21,7 @@ namespace FubarDev.WebDavServer.Tests.Support.ServiceBuilders
     {
         public InMemoryFileSystemServices()
         {
-            var serviceCollection = new ServiceCollection()
+            IServiceCollection serviceCollection = new ServiceCollection()
                 .AddOptions()
                 .AddLogging()
                 .Configure<InMemoryLockManagerOptions>(opt =>
@@ -36,8 +36,8 @@ namespace FubarDev.WebDavServer.Tests.Support.ServiceBuilders
                 .AddWebDav();
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
-            var loggerFactory = ServiceProvider.GetRequiredService<ILoggerFactory>();
-            loggerFactory.AddDebug(LogLevel.Trace);
+            ILoggingBuilder loggerFactory = ServiceProvider.GetRequiredService<ILoggingBuilder>();
+            loggerFactory.AddDebug();
         }
 
         public IServiceProvider ServiceProvider { get; }

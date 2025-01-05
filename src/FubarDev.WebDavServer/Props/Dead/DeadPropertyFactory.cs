@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using FubarDev.WebDavServer.FileSystem;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,14 +22,14 @@ namespace FubarDev.WebDavServer.Props.Dead
     /// </remarks>
     public class DeadPropertyFactory : IDeadPropertyFactory
     {
-        [NotNull]
+        
         private readonly Lazy<IWebDavDispatcher> _webDavDispatcher;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeadPropertyFactory"/> class.
         /// </summary>
         /// <param name="serviceProvider">The service provider used to query the <see cref="Dispatchers.IWebDavClass"/> implementations</param>
-        public DeadPropertyFactory([NotNull] IServiceProvider serviceProvider)
+        public DeadPropertyFactory( IServiceProvider serviceProvider)
         {
             _webDavDispatcher = new Lazy<IWebDavDispatcher>(serviceProvider.GetRequiredService<IWebDavDispatcher>);
         }

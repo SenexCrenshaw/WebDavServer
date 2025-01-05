@@ -11,7 +11,7 @@ using System.Xml.Linq;
 using FubarDev.WebDavServer.FileSystem;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props.Dead
 {
@@ -32,7 +32,7 @@ namespace FubarDev.WebDavServer.Props.Dead
         /// <param name="store">The property store for the dead properties</param>
         /// <param name="entry">The file system entry</param>
         /// <param name="name">The XML name of the dead property</param>
-        public DeadProperty([NotNull] IPropertyStore store, [NotNull] IEntry entry, [NotNull] XName name)
+        public DeadProperty( IPropertyStore store,  IEntry entry,  XName name)
         {
             Name = name;
             _store = store;

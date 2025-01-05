@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 using FubarDev.WebDavServer.FileSystem;
 using FubarDev.WebDavServer.Model;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Handlers.Impl.GetResults
 {
     internal class WebDavCollectionResult : WebDavResult
     {
-        [NotNull]
+        
         private readonly ICollection _collection;
 
-        public WebDavCollectionResult([NotNull] ICollection collection)
+        public WebDavCollectionResult( ICollection collection)
             : base(WebDavStatusCode.OK)
         {
             _collection = collection;

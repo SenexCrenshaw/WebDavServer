@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.FileSystem;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Extensions.Logging;
 
@@ -20,7 +20,7 @@ namespace FubarDev.WebDavServer.Engines.Local
     /// </summary>
     public class MoveInFileSystemTargetAction : ITargetActions<CollectionTarget, DocumentTarget, MissingTarget>
     {
-        [NotNull]
+        
         private readonly ILogger _logger;
 
         /// <summary>
@@ -28,14 +28,14 @@ namespace FubarDev.WebDavServer.Engines.Local
         /// </summary>
         /// <param name="dispatcher">The WebDAV dispatcher</param>
         /// <param name="logger">The logger</param>
-        public MoveInFileSystemTargetAction([NotNull] IWebDavDispatcher dispatcher, [NotNull] ILogger logger)
+        public MoveInFileSystemTargetAction( IWebDavDispatcher dispatcher,  ILogger logger)
         {
             Dispatcher = dispatcher;
             _logger = logger;
         }
 
         /// <inheritdoc />
-        [NotNull]
+        
         public IWebDavDispatcher Dispatcher { get; }
 
         /// <inheritdoc />

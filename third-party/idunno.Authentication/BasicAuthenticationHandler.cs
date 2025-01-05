@@ -3,8 +3,8 @@
 
 using System;
 using System.Linq;
-using System.Text.Encodings.Web;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authentication;
@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using System.IO;
 
 namespace idunno.Authentication
 {
@@ -24,8 +23,7 @@ namespace idunno.Authentication
         public BasicAuthenticationHandler(
             IOptionsMonitor<BasicAuthenticationOptions> options,
             ILoggerFactory logger,
-            UrlEncoder encoder,
-            ISystemClock clock) : base(options, logger, encoder, clock)
+            UrlEncoder encoder) : base(options, logger, encoder)
         {
         }
 
@@ -35,15 +33,18 @@ namespace idunno.Authentication
         /// </summary>
         protected new BasicAuthenticationEvents Events
         {
-            get { return (BasicAuthenticationEvents)base.Events; }
-            set { base.Events = value; }
+            get => (BasicAuthenticationEvents)base.Events;
+            set => base.Events = value;
         }
 
         /// <summary>
         /// Creates a new instance of the events instance.
         /// </summary>
         /// <returns>A new instance of the events instance.</returns>
-        protected override Task<object> CreateEventsAsync() => Task.FromResult<object>(new BasicAuthenticationEvents());
+        protected override Task<object> CreateEventsAsync()
+        {
+            return Task.FromResult<object>(new BasicAuthenticationEvents());
+        }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
@@ -58,7 +59,7 @@ namespace idunno.Authentication
                 return AuthenticateResult.NoResult();
             }
 
-            string encodedCredentials = authorizationHeader.Substring(_Scheme.Length).Trim();
+            string encodedCredentials = authorizationHeader[_Scheme.Length..].Trim();
 
             if (string.IsNullOrEmpty(encodedCredentials))
             {
@@ -79,7 +80,7 @@ namespace idunno.Authentication
                     throw new Exception($"Failed to decode credentials : {encodedCredentials}", ex);
                 }
 
-                var delimiterIndex = decodedCredentials.IndexOf(':');
+                int delimiterIndex = decodedCredentials.IndexOf(':');
                 if (delimiterIndex == -1)
                 {
                     const string missingDelimiterMessage = "Invalid credentials, missing delimiter.";
@@ -87,10 +88,10 @@ namespace idunno.Authentication
                     return AuthenticateResult.Fail(missingDelimiterMessage);
                 }
 
-                var username = decodedCredentials.Substring(0, delimiterIndex);
-                var password = decodedCredentials.Substring(delimiterIndex + 1);
+                string username = decodedCredentials[..delimiterIndex];
+                string password = decodedCredentials[(delimiterIndex + 1)..];
 
-                var validateCredentialsContext = new ValidateCredentialsContext(Context, Scheme, Options)
+                ValidateCredentialsContext validateCredentialsContext = new(Context, Scheme, Options)
                 {
                     Username = username,
                     Password = password
@@ -100,7 +101,7 @@ namespace idunno.Authentication
 
                 if (validateCredentialsContext.Result != null)
                 {
-                    var ticket = new AuthenticationTicket(validateCredentialsContext.Principal, Scheme.Name);
+                    AuthenticationTicket ticket = new(validateCredentialsContext.Principal, Scheme.Name);
                     return AuthenticateResult.Success(ticket);
                 }
 
@@ -108,7 +109,7 @@ namespace idunno.Authentication
             }
             catch (Exception ex)
             {
-                var authenticationFailedContext = new AuthenticationFailedContext(Context, Scheme, Options)
+                AuthenticationFailedContext authenticationFailedContext = new(Context, Scheme, Options)
                 {
                     Exception = ex
                 };
@@ -136,14 +137,14 @@ namespace idunno.Authentication
                 const string insecureProtocolMessage = "Request is HTTP, Basic Authentication will not respond.";
                 Logger.LogInformation(insecureProtocolMessage);
                 Response.StatusCode = 500;
-                var encodedResponseText = Encoding.UTF8.GetBytes(insecureProtocolMessage);
+                byte[] encodedResponseText = Encoding.UTF8.GetBytes(insecureProtocolMessage);
                 Response.Body.Write(encodedResponseText, 0, encodedResponseText.Length);
             }
             else
             {
                 Response.StatusCode = 401;
 
-                var headerValue = _Scheme + $" realm=\"{Options.Realm}\"";
+                string headerValue = _Scheme + $" realm=\"{Options.Realm}\"";
                 Response.Headers.Append(HeaderNames.WWWAuthenticate, headerValue);
             }
 

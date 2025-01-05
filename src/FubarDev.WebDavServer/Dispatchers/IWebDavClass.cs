@@ -10,7 +10,7 @@ using FubarDev.WebDavServer.Props;
 using FubarDev.WebDavServer.Props.Dead;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Dispatchers
 {
@@ -22,26 +22,26 @@ namespace FubarDev.WebDavServer.Dispatchers
         /// <summary>
         /// Gets the HTTP methods supported by this WebDAV class.
         /// </summary>
-        [NotNull]
-        [ItemNotNull]
+        
+        
         IEnumerable<string> HttpMethods { get; }
 
         /// <summary>
         /// Gets the context for a request
         /// </summary>
-        [NotNull]
+        
         IWebDavContext WebDavContext { get; }
 
         /// <summary>
         /// Gets the headers to be sent for a response of an <c>OPTIONS</c> request
         /// </summary>
-        [NotNull]
+        
         IReadOnlyDictionary<string, IEnumerable<string>> OptionsResponseHeaders { get; }
 
         /// <summary>
         /// Gets the headers to be sent for any response
         /// </summary>
-        [NotNull]
+        
         IReadOnlyDictionary<string, IEnumerable<string>> DefaultResponseHeaders { get; }
 
         /// <summary>
@@ -49,9 +49,9 @@ namespace FubarDev.WebDavServer.Dispatchers
         /// </summary>
         /// <param name="entry">The entry to create the properties for</param>
         /// <returns>The properties that are to be used for the given <paramref name="entry"/></returns>
-        [NotNull]
-        [ItemNotNull]
-        IEnumerable<IUntypedReadableProperty> GetProperties([NotNull] IEntry entry);
+        
+        
+        IEnumerable<IUntypedReadableProperty> GetProperties( IEntry entry);
 
         /// <summary>
         /// Tries to create a well known dead property required/used by this WebDAV class implementation
@@ -61,6 +61,6 @@ namespace FubarDev.WebDavServer.Dispatchers
         /// <param name="name">The name of the dead property to create</param>
         /// <param name="deadProperty">The created dead property if this function returned <see langword="true"/>.</param>
         /// <returns><see langword="true"/> when this function could handle the creation of the well known dead property with the given <paramref name="name"/></returns>
-        bool TryCreateDeadProperty([NotNull] IPropertyStore store, [NotNull] IEntry entry, [NotNull] XName name, out IDeadProperty deadProperty);
+        bool TryCreateDeadProperty( IPropertyStore store,  IEntry entry,  XName name, out IDeadProperty deadProperty);
     }
 }

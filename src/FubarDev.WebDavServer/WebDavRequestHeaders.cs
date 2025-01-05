@@ -9,7 +9,7 @@ using System.Xml;
 
 using FubarDev.WebDavServer.Model.Headers;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer
 {
@@ -18,8 +18,8 @@ namespace FubarDev.WebDavServer
     /// </summary>
     public class WebDavRequestHeaders : IWebDavRequestHeaders
     {
-        [NotNull]
-        [ItemNotNull]
+        
+        
         private static readonly string[] _empty = new string[0];
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace FubarDev.WebDavServer
         /// </summary>
         /// <param name="headers">The headers to parse</param>
         /// <param name="context">The WebDAV request context</param>
-        public WebDavRequestHeaders([NotNull] IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers, [NotNull] IWebDavContext context)
+        public WebDavRequestHeaders( IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers,  IWebDavContext context)
         {
             Headers = headers.ToDictionary(x => x.Key, x => (IReadOnlyCollection<string>)x.Value.ToList(), StringComparer.OrdinalIgnoreCase);
             Depth = ParseHeader("Depth", args => DepthHeader.Parse(args.Single()));
@@ -87,7 +87,7 @@ namespace FubarDev.WebDavServer
             }
         }
 
-        private T ParseHeader<T>(string name, [NotNull] Func<IReadOnlyCollection<string>, T> createFunc, T defaultValue = default(T))
+        private T ParseHeader<T>(string name,  Func<IReadOnlyCollection<string>, T> createFunc, T defaultValue = default(T))
         {
             IReadOnlyCollection<string> v;
             if (Headers.TryGetValue(name, out v))

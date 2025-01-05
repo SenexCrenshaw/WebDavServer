@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 using FubarDev.WebDavServer.AspNetCore.Logging;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.AspNetCore
 {
@@ -43,7 +43,7 @@ namespace FubarDev.WebDavServer.AspNetCore
         /// Loads the <see cref="Body"/> into a <see cref="XDocument"/>
         /// </summary>
         /// <returns>The <see cref="XDocument"/> from the <see cref="Body"/></returns>
-        [CanBeNull]
+        
         public XDocument Load()
         {
             Body.Position = 0;

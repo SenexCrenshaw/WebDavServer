@@ -4,7 +4,7 @@
 
 using System.Xml.Linq;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props.Converters
 {
@@ -19,15 +19,15 @@ namespace FubarDev.WebDavServer.Props.Converters
         /// </summary>
         /// <param name="value">The value to validate</param>
         /// <returns><see langword="true"/> when the <paramref name="value"/> is valid</returns>
-        bool IsValidValue([CanBeNull] T value);
+        bool IsValidValue( T value);
 
         /// <summary>
         /// Convert to the type <typeparamref name="T"/> from a given <paramref name="element"/>
         /// </summary>
         /// <param name="element">The <see cref="XElement"/> to extract the value from</param>
         /// <returns>The value extracted from the <paramref name="element"/></returns>
-        [NotNull]
-        T FromElement([NotNull] XElement element);
+        
+        T FromElement( XElement element);
 
         /// <summary>
         /// Covert from a given <paramref name="value"/> to an <see cref="XElement"/>
@@ -35,7 +35,7 @@ namespace FubarDev.WebDavServer.Props.Converters
         /// <param name="name">The name of the <see cref="XElement"/> to be created</param>
         /// <param name="value">The value to be converted to an <see cref="XElement"/></param>
         /// <returns>The created <see cref="XElement"/></returns>
-        [NotNull]
-        XElement ToElement(XName name, [NotNull] T value);
+        
+        XElement ToElement(XName name,  T value);
     }
 }

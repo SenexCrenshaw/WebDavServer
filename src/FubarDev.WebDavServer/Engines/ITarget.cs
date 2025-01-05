@@ -4,7 +4,7 @@
 
 using System;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Engines
 {
@@ -16,13 +16,13 @@ namespace FubarDev.WebDavServer.Engines
         /// <summary>
         /// Gets the name of the target
         /// </summary>
-        [NotNull]
+        
         string Name { get; }
 
         /// <summary>
         /// Gets the destination URL of the target
         /// </summary>
-        [NotNull]
+        
         Uri DestinationUrl { get; }
     }
 }

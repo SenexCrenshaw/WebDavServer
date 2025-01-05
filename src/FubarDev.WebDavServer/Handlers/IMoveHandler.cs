@@ -6,7 +6,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Handlers
 {
@@ -22,8 +22,8 @@ namespace FubarDev.WebDavServer.Handlers
         /// <param name="destination">The destination to move to</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The result of the operation</returns>
-        [NotNull]
-        [ItemNotNull]
-        Task<IWebDavResult> MoveAsync([NotNull] string path, [NotNull] Uri destination, CancellationToken cancellationToken);
+        
+        
+        Task<IWebDavResult> MoveAsync( string path,  Uri destination, CancellationToken cancellationToken);
     }
 }

@@ -12,7 +12,7 @@ using FubarDev.WebDavServer.FileSystem.Mount;
 using FubarDev.WebDavServer.Locking;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.FileSystem.DotNet
 {
@@ -35,10 +35,10 @@ namespace FubarDev.WebDavServer.FileSystem.DotNet
         /// <param name="lockManager">The global lock manager</param>
         /// <param name="propertyStoreFactory">The store for dead properties</param>
         public DotNetFileSystem(
-            [NotNull] DotNetFileSystemOptions options,
-            [CanBeNull] ICollection mountPoint,
-            [NotNull] string rootFolder,
-            [NotNull] IPathTraversalEngine pathTraversalEngine,
+             DotNetFileSystemOptions options,
+             ICollection mountPoint,
+             string rootFolder,
+             IPathTraversalEngine pathTraversalEngine,
             ILockManager lockManager = null,
             IPropertyStoreFactory propertyStoreFactory = null)
         {

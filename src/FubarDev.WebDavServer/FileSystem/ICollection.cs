@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.FileSystem
 {
@@ -21,17 +21,17 @@ namespace FubarDev.WebDavServer.FileSystem
         /// <param name="name">The name of the child entry to get</param>
         /// <param name="ct">The cancellation token</param>
         /// <returns>The found entry (or <c>null</c>)</returns>
-        [NotNull]
-        [ItemCanBeNull]
-        Task<IEntry> GetChildAsync([NotNull] string name, CancellationToken ct);
+        
+        
+        Task<IEntry> GetChildAsync( string name, CancellationToken ct);
 
         /// <summary>
         /// Gets all child entries
         /// </summary>
         /// <param name="ct">The cancellation token</param>
         /// <returns>The found entries</returns>
-        [NotNull]
-        [ItemNotNull]
+        
+        
         Task<IReadOnlyCollection<IEntry>> GetChildrenAsync(CancellationToken ct);
 
         /// <summary>
@@ -40,9 +40,9 @@ namespace FubarDev.WebDavServer.FileSystem
         /// <param name="name">The name of the new document</param>
         /// <param name="ct">The cancellation token</param>
         /// <returns>The created document</returns>
-        [NotNull]
-        [ItemNotNull]
-        Task<IDocument> CreateDocumentAsync([NotNull] string name, CancellationToken ct);
+        
+        
+        Task<IDocument> CreateDocumentAsync( string name, CancellationToken ct);
 
         /// <summary>
         /// Creates a child collection
@@ -50,8 +50,8 @@ namespace FubarDev.WebDavServer.FileSystem
         /// <param name="name">The name of the new collection</param>
         /// <param name="ct">The cancellation token</param>
         /// <returns>The new collection</returns>
-        [NotNull]
-        [ItemNotNull]
-        Task<ICollection> CreateCollectionAsync([NotNull] string name, CancellationToken ct);
+        
+        
+        Task<ICollection> CreateCollectionAsync( string name, CancellationToken ct);
     }
 }

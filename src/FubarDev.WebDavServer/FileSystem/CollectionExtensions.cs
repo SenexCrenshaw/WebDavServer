@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 using FubarDev.WebDavServer.FileSystem.Mount;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.FileSystem
 {
@@ -24,12 +24,11 @@ namespace FubarDev.WebDavServer.FileSystem
         /// <param name="collection">The collection to found the mount destination for</param>
         /// <param name="mountPointProvider">The mount point provider</param>
         /// <returns>The <paramref name="collection"/> or the destination collection if a mount point existed</returns>
-        public static async Task<ICollection> GetMountTargetAsync([NotNull] this ICollection collection, [CanBeNull] IMountPointProvider mountPointProvider)
+        public static async Task<ICollection> GetMountTargetAsync(this ICollection collection, IMountPointProvider mountPointProvider)
         {
-            IFileSystem fileSystem;
-            if (mountPointProvider != null && mountPointProvider.TryGetMountPoint(collection.Path, out fileSystem))
-                return await fileSystem.Root;
-            return collection;
+            return mountPointProvider != null && mountPointProvider.TryGetMountPoint(collection.Path, out IFileSystem fileSystem)
+                ? await fileSystem.Root
+                : collection;
         }
 
         /// <summary>
@@ -38,12 +37,11 @@ namespace FubarDev.WebDavServer.FileSystem
         /// <param name="collection">The collection to found the mount destination for</param>
         /// <param name="mountPointProvider">The mount point provider</param>
         /// <returns>The <paramref name="collection"/> or the destination collection if a mount point existed</returns>
-        public static async Task<IEntry> GetMountTargetEntryAsync([NotNull] this ICollection collection, [CanBeNull] IMountPointProvider mountPointProvider)
+        public static async Task<IEntry> GetMountTargetEntryAsync(this ICollection collection, IMountPointProvider mountPointProvider)
         {
-            IFileSystem fileSystem;
-            if (mountPointProvider != null && mountPointProvider.TryGetMountPoint(collection.Path, out fileSystem))
-                return await fileSystem.Root;
-            return collection;
+            return mountPointProvider != null && mountPointProvider.TryGetMountPoint(collection.Path, out IFileSystem fileSystem)
+                ? await fileSystem.Root
+                : (IEntry)collection;
         }
 
         /// <summary>
@@ -78,35 +76,32 @@ namespace FubarDev.WebDavServer.FileSystem
         /// <returns>The collection node</returns>
         public static async Task<ICollectionNode> GetNodeAsync(this ICollection collection, int maxDepth, CancellationToken cancellationToken)
         {
-            var subNodeQueue = new Queue<NodeInfo>();
-            var result = new NodeInfo(collection);
-            var current = result;
+            Queue<NodeInfo> subNodeQueue = new();
+            NodeInfo result = new(collection);
+            NodeInfo current = result;
 
             if (maxDepth > 0)
             {
-                using (var entries = EnumerateEntries(collection, maxDepth - 1).GetEnumerator())
+                await using IAsyncEnumerator<IEntry> entries = EnumerateEntries(collection, maxDepth - 1).GetAsyncEnumerator(cancellationToken);
+                while (await entries.MoveNextAsync(cancellationToken).ConfigureAwait(false))
                 {
-                    while (await entries.MoveNext(cancellationToken).ConfigureAwait(false))
+                    IEntry entry = entries.Current;
+                    ICollection parent = entry.Parent;
+                    while (parent != current.Collection)
                     {
-                        var entry = entries.Current;
-                        var parent = entry.Parent;
-                        while (parent != current.Collection)
-                        {
-                            current = subNodeQueue.Dequeue();
-                        }
+                        current = subNodeQueue.Dequeue();
+                    }
 
-                        var doc = entry as IDocument;
-                        if (doc == null)
-                        {
-                            var coll = (ICollection)entry;
-                            var info = new NodeInfo(coll);
-                            current.SubNodes.Add(info);
-                            subNodeQueue.Enqueue(info);
-                        }
-                        else
-                        {
-                            current.Documents.Add(doc);
-                        }
+                    if (entry is not IDocument doc)
+                    {
+                        ICollection coll = (ICollection)entry;
+                        NodeInfo info = new(coll);
+                        current.SubNodes.Add(info);
+                        subNodeQueue.Enqueue(info);
+                    }
+                    else
+                    {
+                        current.Documents.Add(doc);
                     }
                 }
             }
@@ -124,7 +119,7 @@ namespace FubarDev.WebDavServer.FileSystem
 
             private readonly int _startDepth;
 
-            public FileSystemEntries([NotNull] ICollection collection, [CanBeNull] [ItemNotNull] IReadOnlyCollection<IEntry> children, int startDepth, int remainingDepth)
+            public FileSystemEntries(ICollection collection, IReadOnlyCollection<IEntry> children, int startDepth, int remainingDepth)
             {
                 _collection = collection;
                 _children = children;
@@ -132,14 +127,19 @@ namespace FubarDev.WebDavServer.FileSystem
                 _remainingDepth = remainingDepth;
             }
 
-            public IAsyncEnumerator<IEntry> GetEnumerator()
+            public IAsyncEnumerator<IEntry> GetAsyncEnumerator(CancellationToken cancellationToken = default)
             {
                 return new FileSystemEntriesEnumerator(_collection, _children, _startDepth, _remainingDepth);
             }
 
+            //public IAsyncEnumerator<IEntry> GetEnumerator()
+            //{
+            //    return new FileSystemEntriesEnumerator(_collection, _children, _startDepth, _remainingDepth);
+            //}
+
             private class FileSystemEntriesEnumerator : IAsyncEnumerator<IEntry>
             {
-                private readonly Queue<CollectionInfo> _collections = new Queue<CollectionInfo>();
+                private readonly Queue<CollectionInfo> _collections = new();
 
                 private readonly int _maxDepth;
 
@@ -149,7 +149,7 @@ namespace FubarDev.WebDavServer.FileSystem
 
                 private IEnumerator<IEntry> _entries;
 
-                public FileSystemEntriesEnumerator([NotNull] ICollection collection, [CanBeNull] [ItemNotNull] IReadOnlyCollection<IEntry> children, int startDepth, int maxDepth)
+                public FileSystemEntriesEnumerator(ICollection collection, IReadOnlyCollection<IEntry> children, int startDepth, int maxDepth)
                 {
                     _maxDepth = maxDepth;
                     _currentDepth = startDepth;
@@ -163,28 +163,34 @@ namespace FubarDev.WebDavServer.FileSystem
                     _entries?.Dispose();
                 }
 
-                public async Task<bool> MoveNext(CancellationToken cancellationToken)
+                public ValueTask DisposeAsync()
                 {
-                    var resultFound = false;
-                    var hasCurrent = false;
+                    _entries?.Dispose();
+                    return ValueTask.CompletedTask;
+                }
+
+                public async ValueTask<bool> MoveNextAsync()
+                {
+                    bool resultFound = false;
+                    bool hasCurrent = false;
+                    CancellationToken cancellationToken = CancellationToken.None;
 
                     while (!resultFound)
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
+                        //cancellationToken.ThrowIfCancellationRequested();
 
                         if (_entries == null)
                         {
-                            var nextCollectionInfo = _collections.Dequeue();
+                            CollectionInfo nextCollectionInfo = _collections.Dequeue();
                             _collection = nextCollectionInfo.Collection;
                             _currentDepth = nextCollectionInfo.Depth;
-                            var children = nextCollectionInfo.Children ?? await _collection.GetChildrenAsync(cancellationToken).ConfigureAwait(false);
+                            IReadOnlyCollection<IEntry> children = nextCollectionInfo.Children ?? await _collection.GetChildrenAsync(cancellationToken).ConfigureAwait(false);
                             _entries = children.GetEnumerator();
                         }
 
                         if (_entries.MoveNext())
                         {
-                            var coll = _entries.Current as ICollection;
-                            if (_currentDepth < _maxDepth && coll != null)
+                            if (_currentDepth < _maxDepth && _entries.Current is ICollection coll)
                             {
                                 IReadOnlyCollection<IEntry> children;
                                 try
@@ -197,7 +203,7 @@ namespace FubarDev.WebDavServer.FileSystem
                                     children = new IEntry[0];
                                 }
 
-                                var collectionInfo = new CollectionInfo(coll, children, _currentDepth + 1);
+                                CollectionInfo collectionInfo = new(coll, children, _currentDepth + 1);
                                 _collections.Enqueue(collectionInfo);
                             }
 
@@ -220,20 +226,25 @@ namespace FubarDev.WebDavServer.FileSystem
                     return hasCurrent;
                 }
 
-                private struct CollectionInfo
+                //public ValueTask<bool> MoveNextAsync()
+                //{
+                //    throw new NotImplementedException();
+                //}
+
+                private readonly struct CollectionInfo
                 {
-                    public CollectionInfo([NotNull] ICollection collection, [CanBeNull] [ItemNotNull] IReadOnlyCollection<IEntry> children, int depth)
+                    public CollectionInfo(ICollection collection, IReadOnlyCollection<IEntry> children, int depth)
                     {
                         Collection = collection;
                         Children = children;
                         Depth = depth;
                     }
 
-                    [NotNull]
+
                     public ICollection Collection { get; }
 
-                    [CanBeNull]
-                    [ItemNotNull]
+
+
                     public IReadOnlyCollection<IEntry> Children { get; }
 
                     public int Depth { get; }
@@ -252,9 +263,9 @@ namespace FubarDev.WebDavServer.FileSystem
 
             public ICollection Collection { get; }
 
-            public List<IDocument> Documents { get; } = new List<IDocument>();
+            public List<IDocument> Documents { get; } = [];
 
-            public List<NodeInfo> SubNodes { get; } = new List<NodeInfo>();
+            public List<NodeInfo> SubNodes { get; } = [];
 
             IReadOnlyCollection<ICollectionNode> ICollectionNode.Nodes => SubNodes;
 

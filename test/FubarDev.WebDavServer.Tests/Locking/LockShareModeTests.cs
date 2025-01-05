@@ -11,7 +11,7 @@ using System.Xml.Linq;
 using FubarDev.WebDavServer.Locking;
 using FubarDev.WebDavServer.Tests.Support.ServiceBuilders;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -407,7 +407,7 @@ namespace FubarDev.WebDavServer.Tests.Locking
             ValidateLockResult(result2);
         }
 
-        [NotNull]
+        
         private IActiveLock ValidateLockResult(LockResult result)
         {
             if (result.Lock != null)

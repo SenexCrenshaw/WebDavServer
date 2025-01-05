@@ -19,12 +19,12 @@
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" PrivateAssets="All" />
-  </ItemGroup>
+  <!-- <ItemGroup> -->
+    <!-- <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" PrivateAssets="All" /> -->
+  <!-- </ItemGroup> -->
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='net461'">
-    <DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
-  </PropertyGroup>
+  <!-- <PropertyGroup Condition="'$(TargetFramework)'=='net461'"> -->
+    <!-- <DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants> -->
+  <!-- </PropertyGroup> -->
 
 </Project>

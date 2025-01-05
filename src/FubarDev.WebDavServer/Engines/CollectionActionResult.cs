@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Engines
 {
@@ -45,9 +45,9 @@ namespace FubarDev.WebDavServer.Engines
             return Flatten(this);
         }
 
-        [NotNull]
-        [ItemNotNull]
-        private static IEnumerable<ActionResult> Flatten([NotNull] CollectionActionResult collectionResult)
+        
+        
+        private static IEnumerable<ActionResult> Flatten( CollectionActionResult collectionResult)
         {
             yield return collectionResult;
             if (collectionResult.DocumentActionResults != null)

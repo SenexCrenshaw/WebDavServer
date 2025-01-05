@@ -12,7 +12,7 @@ using FubarDev.WebDavServer.Model;
 using FubarDev.WebDavServer.Props.Generic;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props.Dead
 {
@@ -26,16 +26,16 @@ namespace FubarDev.WebDavServer.Props.Dead
         /// </summary>
         public static readonly XName PropertyName = WebDavXml.Dav + "getcontentlanguage";
 
-        [NotNull]
+        
         private readonly IEntry _entry;
 
-        [NotNull]
+        
         private readonly IPropertyStore _store;
 
-        [NotNull]
+        
         private readonly string _defaultContentLanguage;
 
-        [CanBeNull]
+        
         private string _value;
 
         private bool _isLoaded;
@@ -47,7 +47,7 @@ namespace FubarDev.WebDavServer.Props.Dead
         /// <param name="store">The property store to store this property</param>
         /// <param name="defaultContentLanguage">The content language to return when none was specified</param>
         /// <param name="cost">The cost of querying the display names property</param>
-        public GetContentLanguageProperty([NotNull] IEntry entry, [NotNull] IPropertyStore store, [NotNull] string defaultContentLanguage = "en", int? cost = null)
+        public GetContentLanguageProperty( IEntry entry,  IPropertyStore store,  string defaultContentLanguage = "en", int? cost = null)
             : base(PropertyName, null, cost ?? store.Cost, null, null, WebDavXml.Dav + "contentlanguage")
         {
             _entry = entry;

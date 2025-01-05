@@ -16,11 +16,11 @@ namespace FubarDev.WebDavServer.Tests.Support.ServiceBuilders
 {
     public class SQLiteLockServices : ILockServices, IDisposable
     {
-        private readonly ConcurrentBag<string> _tempDbFileNames = new ConcurrentBag<string>();
+        private readonly ConcurrentBag<string> _tempDbFileNames = [];
 
         public SQLiteLockServices()
         {
-            var serviceCollection = new ServiceCollection();
+            ServiceCollection serviceCollection = new();
             serviceCollection.AddOptions();
             serviceCollection.AddLogging();
             serviceCollection.AddScoped<ISystemClock, TestSystemClock>();
@@ -28,29 +28,29 @@ namespace FubarDev.WebDavServer.Tests.Support.ServiceBuilders
             serviceCollection.AddTransient<ILockManager>(
                 sp =>
                 {
-                    var tempDbFileName = Path.GetTempFileName();
+                    string tempDbFileName = Path.GetTempFileName();
                     _tempDbFileNames.Add(tempDbFileName);
-                    var config = new SQLiteLockManagerOptions()
+                    SQLiteLockManagerOptions config = new()
                     {
                         Rounding = new DefaultLockTimeRounding(DefaultLockTimeRoundingMode.OneHundredMilliseconds),
                         DatabaseFileName = tempDbFileName,
                     };
-                    var cleanupTask = sp.GetRequiredService<ILockCleanupTask>();
-                    var systemClock = sp.GetRequiredService<ISystemClock>();
-                    var logger = sp.GetRequiredService<ILogger<SQLiteLockManager>>();
+                    ILockCleanupTask cleanupTask = sp.GetRequiredService<ILockCleanupTask>();
+                    ISystemClock systemClock = sp.GetRequiredService<ISystemClock>();
+                    ILogger<SQLiteLockManager> logger = sp.GetRequiredService<ILogger<SQLiteLockManager>>();
                     return new SQLiteLockManager(config, cleanupTask, systemClock, logger);
                 });
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
-            var loggerFactory = ServiceProvider.GetRequiredService<ILoggerFactory>();
-            loggerFactory.AddDebug(LogLevel.Trace);
+            ILoggingBuilder loggerFactory = ServiceProvider.GetRequiredService<ILoggingBuilder>();
+            loggerFactory.AddDebug();
         }
 
         public IServiceProvider ServiceProvider { get; }
 
         public void Dispose()
         {
-            foreach (var tempDbFileName in _tempDbFileNames)
+            foreach (string tempDbFileName in _tempDbFileNames)
             {
                 File.Delete(tempDbFileName);
             }

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
+
 
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +19,7 @@ namespace FubarDev.WebDavServer.FileSystem
     /// </summary>
     public class PathTraversalEngine : IPathTraversalEngine
     {
-        [CanBeNull]
+        
         private readonly ILogger<PathTraversalEngine> _logger;
 
         /// <summary>
@@ -43,9 +43,9 @@ namespace FubarDev.WebDavServer.FileSystem
             return TraverseAsync(currentCollection, SplitPath(path ?? string.Empty), ct);
         }
 
-        [NotNull]
-        [ItemNotNull]
-        private static IEnumerable<string> SplitPath([NotNull] string path)
+        
+        
+        private static IEnumerable<string> SplitPath( string path)
         {
             var lastIndex = 0;
             var indexOfSlash = path.IndexOf('/');
@@ -61,8 +61,8 @@ namespace FubarDev.WebDavServer.FileSystem
                 yield return remaining;
         }
 
-        [NotNull]
-        private static IEnumerable<PathElement> ToPathElements([NotNull][ItemNotNull] IEnumerable<string> pathParts)
+        
+        private static IEnumerable<PathElement> ToPathElements( IEnumerable<string> pathParts)
         {
             foreach (var pathPart in pathParts)
             {
@@ -72,24 +72,24 @@ namespace FubarDev.WebDavServer.FileSystem
             }
         }
 
-        [NotNull]
-        [ItemNotNull]
-        private Task<SelectionResult> TraverseAsync([NotNull] ICollection currentCollection, [NotNull][ItemNotNull] IEnumerable<string> pathParts, CancellationToken ct)
+        
+        
+        private Task<SelectionResult> TraverseAsync( ICollection currentCollection,  IEnumerable<string> pathParts, CancellationToken ct)
         {
             return TraverseAsync(currentCollection, ToPathElements(pathParts), ct);
         }
 
-        [NotNull]
-        [ItemNotNull]
-        private async Task<SelectionResult> TraverseAsync([NotNull] IFileSystem fileSystem, [NotNull][ItemNotNull] IEnumerable<string> pathParts, CancellationToken ct)
+        
+        
+        private async Task<SelectionResult> TraverseAsync( IFileSystem fileSystem,  IEnumerable<string> pathParts, CancellationToken ct)
         {
             var current = await fileSystem.Root.ConfigureAwait(false);
             return await TraverseAsync(current, pathParts, ct).ConfigureAwait(false);
         }
 
-        [NotNull]
-        [ItemNotNull]
-        private async Task<SelectionResult> TraverseAsync([NotNull] ICollection startCollection, [NotNull] IEnumerable<PathElement> pathParts, CancellationToken ct)
+        
+        
+        private async Task<SelectionResult> TraverseAsync( ICollection startCollection,  IEnumerable<PathElement> pathParts, CancellationToken ct)
         {
             var currentPathStack = new Stack<ICollection>();
 

@@ -18,21 +18,21 @@ using FubarDev.WebDavServer.Props.Dead;
 using FubarDev.WebDavServer.Props.Live;
 using FubarDev.WebDavServer.Utils;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Handlers.Impl.GetResults
 {
     internal class WebDavPartialDocumentResult : WebDavResult
     {
-        [NotNull]
+        
         private readonly IDocument _document;
 
         private readonly bool _returnFile;
 
-        [NotNull]
+        
         private readonly IReadOnlyCollection<NormalizedRangeItem> _rangeItems;
 
-        public WebDavPartialDocumentResult([NotNull] IDocument document, bool returnFile, [NotNull] IReadOnlyCollection<NormalizedRangeItem> rangeItems)
+        public WebDavPartialDocumentResult( IDocument document, bool returnFile,  IReadOnlyCollection<NormalizedRangeItem> rangeItems)
             : base(WebDavStatusCode.PartialContent)
         {
             _document = document;
@@ -46,7 +46,7 @@ namespace FubarDev.WebDavServer.Handlers.Impl.GetResults
 
             response.Headers["Accept-Ranges"] = new[] { "bytes" };
 
-            var properties = await _document.GetProperties(response.Dispatcher).ToList(ct).ConfigureAwait(false);
+            var properties = await _document.GetProperties(response.Dispatcher).ToListAsync(ct).ConfigureAwait(false);
             var etagProperty = properties.OfType<GetETagProperty>().FirstOrDefault();
             if (etagProperty != null)
             {

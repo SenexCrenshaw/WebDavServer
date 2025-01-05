@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Model.Headers
 {
@@ -27,13 +27,13 @@ namespace FubarDev.WebDavServer.Model.Headers
         /// <summary>
         /// Gets a default strong entity tag comparer
         /// </summary>
-        [NotNull]
+        
         public static EntityTagComparer Strong { get; } = new EntityTagComparer(true);
 
         /// <summary>
         /// Gets a default weak entity tag comparer
         /// </summary>
-        [NotNull]
+        
         public static EntityTagComparer Weak { get; } = new EntityTagComparer(false);
 
         /// <inheritdoc />

@@ -13,7 +13,7 @@ using FubarDev.WebDavServer.Model.Headers;
 using FubarDev.WebDavServer.Props.Converters;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props.Dead
 {
@@ -27,7 +27,7 @@ namespace FubarDev.WebDavServer.Props.Dead
         /// </summary>
         public static readonly XName PropertyName = WebDavXml.Dav + "getetag";
 
-        [CanBeNull]
+        
         private readonly IPropertyStore _propertyStore;
 
         private readonly IEntry _entry;
@@ -42,7 +42,7 @@ namespace FubarDev.WebDavServer.Props.Dead
         /// <param name="propertyStore">The property store to store this property</param>
         /// <param name="entry">The entry to instantiate this property for</param>
         /// <param name="cost">The cost of querying the display names property</param>
-        public GetETagProperty([CanBeNull] IPropertyStore propertyStore, IEntry entry, int? cost = null)
+        public GetETagProperty( IPropertyStore propertyStore, IEntry entry, int? cost = null)
         {
             _propertyStore = propertyStore;
             _entry = entry;

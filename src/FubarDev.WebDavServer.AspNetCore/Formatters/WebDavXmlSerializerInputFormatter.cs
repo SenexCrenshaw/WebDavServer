@@ -2,6 +2,7 @@
 // Copyright (c) Fubar Development Junker. All rights reserved.
 // </copyright>
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace FubarDev.WebDavServer.AspNetCore.Formatters
@@ -14,7 +15,8 @@ namespace FubarDev.WebDavServer.AspNetCore.Formatters
         /// <summary>
         /// Initializes a new instance of the <see cref="WebDavXmlSerializerInputFormatter"/> class.
         /// </summary>
-        public WebDavXmlSerializerInputFormatter()
+        public WebDavXmlSerializerInputFormatter(MvcOptions options)
+            : base(options)
         {
             SupportedMediaTypes.Add("text/plain");
         }
@@ -22,10 +24,10 @@ namespace FubarDev.WebDavServer.AspNetCore.Formatters
         /// <inheritdoc />
         public override bool CanRead(InputFormatterContext context)
         {
-            var request = context.HttpContext.Request;
+            Microsoft.AspNetCore.Http.HttpRequest request = context.HttpContext.Request;
             if (request.ContentType == null)
             {
-                var contentLength = request.ContentLength;
+                long? contentLength = request.ContentLength;
                 if (contentLength.GetValueOrDefault() == 0)
                 {
                     // We allow that the following types have an optional body

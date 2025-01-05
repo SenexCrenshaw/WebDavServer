@@ -12,7 +12,7 @@ using FubarDev.WebDavServer.Model;
 using FubarDev.WebDavServer.Props.Generic;
 using FubarDev.WebDavServer.Props.Store;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props.Dead
 {
@@ -41,7 +41,7 @@ namespace FubarDev.WebDavServer.Props.Dead
         /// <param name="store">The property store to store this property</param>
         /// <param name="hideExtension">Hide the extension from the display name</param>
         /// <param name="cost">The cost of querying the display names property</param>
-        public DisplayNameProperty([NotNull] IEntry entry, [NotNull] IPropertyStore store, bool hideExtension, int? cost = null)
+        public DisplayNameProperty( IEntry entry,  IPropertyStore store, bool hideExtension, int? cost = null)
             : base(PropertyName, null, cost ?? store.Cost, null, null)
         {
             _entry = entry;

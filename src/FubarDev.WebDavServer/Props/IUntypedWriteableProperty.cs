@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-using JetBrains.Annotations;
+
 
 namespace FubarDev.WebDavServer.Props
 {
@@ -21,7 +21,7 @@ namespace FubarDev.WebDavServer.Props
         /// <param name="element">The <see cref="XElement"/> to be set</param>
         /// <param name="ct">The cancellation token</param>
         /// <returns>The async task</returns>
-        [NotNull]
-        Task SetXmlValueAsync([NotNull] XElement element, CancellationToken ct);
+        
+        Task SetXmlValueAsync( XElement element, CancellationToken ct);
     }
 }

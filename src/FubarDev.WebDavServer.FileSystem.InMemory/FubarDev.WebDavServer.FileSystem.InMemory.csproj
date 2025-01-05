@@ -3,7 +3,7 @@
     <Description>In-memory file system support for the .NET WebDAV server</Description>
     <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
-  <!--<Import Project="../../PackageLibrary.props" />-->
+  <Import Project="../../PackageLibrary.props" />
   <ItemGroup>
     <ProjectReference Include="..\FubarDev.WebDavServer\FubarDev.WebDavServer.csproj" />
   </ItemGroup>

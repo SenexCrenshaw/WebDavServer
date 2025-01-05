@@ -3,7 +3,7 @@
     <Description>System.IO based file system support for the .NET WebDAV server</Description>
     <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
-  <!--<Import Project="../../PackageLibrary.props" />-->
+  <Import Project="../../PackageLibrary.props" />
   <ItemGroup>
     <PackageReference Include="System.Interactive.Async" Version="6.0.1" />
   </ItemGroup>
@@ -11,7 +11,7 @@
     <ProjectReference Include="..\FubarDev.WebDavServer\FubarDev.WebDavServer.csproj" />
   </ItemGroup>
   <ItemGroup>
-    
+
     <PackageReference Update="StyleCop.Analyzers" Version="1.1.118" />
   </ItemGroup>
 </Project>

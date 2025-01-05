@@ -3,7 +3,7 @@
     <Description>SQLite file system support for the .NET WebDAV server</Description>
     <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
-  <!--<Import Project="../../PackageLibrary.props" />-->
+  <Import Project="../../PackageLibrary.props" />
   <ItemGroup>
     <PackageReference Include="sqlite-net-pcl" Version="1.4.118">
       <NoWarn>NU1701</NoWarn>

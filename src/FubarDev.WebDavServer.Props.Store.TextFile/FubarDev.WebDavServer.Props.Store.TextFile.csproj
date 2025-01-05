@@ -3,7 +3,7 @@
     <Description>JSON text file based property store support for the .NET WebDAV server</Description>
     <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
-  <!--<Import Project="../../PackageLibrary.props" />-->
+  <Import Project="../../PackageLibrary.props" />
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Polly" Version="8.5.0" />

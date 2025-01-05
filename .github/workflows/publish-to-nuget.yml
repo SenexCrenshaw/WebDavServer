@@ -1,0 +1,33 @@
+name: Publish NuGet Packages
+
+on:
+  push:
+    tags:
+      - "v*" # Trigger on version tags (e.g., v1.0.0)
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up .NET
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "9.0" # Adjust to your target framework
+
+      # Step 3: Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Step 4: Build and Pack Projects
+      - name: Build and Pack
+        run: dotnet pack --configuration Release --output ./artifacts
+
+      # Step 5: Push Packages to NuGet
+      - name: Push to NuGet
+        run: dotnet nuget push ./artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
